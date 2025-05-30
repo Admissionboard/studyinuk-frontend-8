@@ -46,7 +46,6 @@ export {
   BarChart,
   BarChart3,  // ✅ added
   Chrome,     // ✅ added
-  Languages,  // ✅ added now
   TrendingUp,
   Target,
   Award,
