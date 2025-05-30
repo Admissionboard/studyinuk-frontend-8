@@ -108,5 +108,6 @@ export {
   SkipBack,
   SkipForward,
   Rewind,
-  FastForward
+  FastForward,
+  Circle
 } from "lucide-react";
