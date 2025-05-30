@@ -41,7 +41,8 @@ export {
   Users,
   FileText,
   BarChart,
-  BarChart3, // ✅ This is the fix
+  BarChart3, // ✅ added earlier
+  Chrome,     // ✅ new addition
   TrendingUp,
   Target,
   Award,
