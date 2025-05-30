@@ -1,4 +1,7 @@
 // Re-export commonly used Lucide React icons
+
+import { Languages } from "lucide-react";
+export { Languages };
 export {
   Heart,
   MapPin,
