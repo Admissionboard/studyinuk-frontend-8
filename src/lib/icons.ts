@@ -41,8 +41,9 @@ export {
   Users,
   FileText,
   BarChart,
-  BarChart3, // ✅ added earlier
-  Chrome,     // ✅ new addition
+  BarChart3,  // ✅ added
+  Chrome,     // ✅ added
+  Languages,  // ✅ added now
   TrendingUp,
   Target,
   Award,
