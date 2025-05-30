@@ -41,6 +41,7 @@ export {
   Users,
   FileText,
   BarChart,
+  BarChart3, // ✅ This is the fix
   TrendingUp,
   Target,
   Award,
