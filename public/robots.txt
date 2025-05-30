@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /private
+Disallow: /*?*
+Allow: /api/sitemap.xml
+
+Sitemap: https://studyinuk.co/api/sitemap.xml
+
+# Bangladesh Study in UK - SEO Configuration
+# Allow crawling of public educational content
+# Block admin and private areas
