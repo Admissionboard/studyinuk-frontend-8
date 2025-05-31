@@ -52,7 +52,13 @@ export const getQueryFn = (options: {
     console.log("🔍 queryKey received:", queryKey); // 👈 Add this line
 
     try {
-      const url = Array.isArray(queryKey) ? queryKey.join("/") : String(queryKey);
+      const url = Array.isArray(queryKey)
+  ? queryKey.filter((v) => typeof v === "string").join("/")
+  : String(queryKey);
+
+if (!url || url.toUpperCase() === "GET") {
+  throw new Error(`⚠️ Invalid query key: ${JSON.stringify(queryKey)}`);
+}
       return await apiRequest(url);
     } catch (error: any) {
       if (error.message?.includes("401") && options.on401 === "returnNull") {
