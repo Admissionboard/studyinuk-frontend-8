@@ -18,7 +18,7 @@ export async function apiRequest(
   options: RequestInit = {}
 ): Promise<any> {
   const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
-  const fullUrl = `${apiUrl}${url}`;
+  const fullUrl = `${apiUrl.replace(/\/+$/, '')}/${url.replace(/^\/+/, '')}`;
   
   const authHeaders = await getAuthHeaders();
   
