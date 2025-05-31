@@ -23,6 +23,13 @@ export async function apiRequest(
   const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const fullUrl = `${apiUrl.replace(/\/+$/, '')}/${url.replace(/^\/+/, '')}`;
 
+  // 🚨 Add this check to catch invalid usage
+  if (url.toUpperCase() === "GET") {
+    console.error("🚨 Bad API request made to 'GET'. This usually means a query or mutation is calling apiRequest('GET') by mistake.");
+    console.trace(); // 🔍 Shows exactly where the error originated
+    throw new Error("Invalid API request: 'GET' is not a valid path.");
+  }
+
   const authHeaders = await getAuthHeaders();
 
   const response = await fetch(fullUrl, {
