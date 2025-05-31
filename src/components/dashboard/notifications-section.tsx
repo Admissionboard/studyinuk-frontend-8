@@ -30,12 +30,16 @@ export default function NotificationsSection({ onBellClick }: { onBellClick?: ()
 
   // Mark notification as read mutation
   const markAsReadMutation = useMutation({
-    mutationFn: (id: number) => apiRequest("PATCH", `/api/notifications/${id}/read`, {}),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/notifications/unread-count"] });
-    },
-  });
+  mutationFn: (id: number) =>
+    apiRequest(`/api/notifications/${id}/read`, {
+      method: "PATCH",
+      body: JSON.stringify({}),
+    }),
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
+    queryClient.invalidateQueries({ queryKey: ["/api/notifications/unread-count"] });
+  },
+});
 
   // Removed automatic notification sound
 

@@ -86,17 +86,20 @@ export default function ProfessionalAdminDashboard() {
 
   // Mutations
   const updateApplicationStatus = useMutation({
-    mutationFn: ({ id, status }: { id: number; status: string }) =>
-      apiRequest("PATCH", `/api/admin/applications/${id}/status`, { status }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/applications"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/stats"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/applications"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/notifications/unread-count"] });
-      toast({ title: "Application status updated successfully" });
-    },
-  });
+  mutationFn: ({ id, status }: { id: number; status: string }) =>
+    apiRequest(`/api/admin/applications/${id}/status`, {
+      method: "PATCH",
+      body: JSON.stringify({ status }),
+    }),
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["/api/admin/applications"] });
+    queryClient.invalidateQueries({ queryKey: ["/api/admin/stats"] });
+    queryClient.invalidateQueries({ queryKey: ["/api/applications"] });
+    queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
+    queryClient.invalidateQueries({ queryKey: ["/api/notifications/unread-count"] });
+    toast({ title: "Application status updated successfully" });
+  },
+});
 
   const createLead = useMutation({
     mutationFn: (leadData: any) => apiRequest("POST", "/api/admin/leads", leadData),

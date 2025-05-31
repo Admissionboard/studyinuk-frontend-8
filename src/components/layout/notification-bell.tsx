@@ -27,12 +27,16 @@ export default function NotificationBell() {
   });
 
   const markAsReadMutation = useMutation({
-    mutationFn: (id: number) => apiRequest("PATCH", `/api/notifications/${id}/read`, {}),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/notifications/unread-count"] });
-    },
-  });
+  mutationFn: (id: number) =>
+    apiRequest(`/api/notifications/${id}/read`, {
+      method: "PATCH",
+      body: JSON.stringify({}),
+    }),
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
+    queryClient.invalidateQueries({ queryKey: ["/api/notifications/unread-count"] });
+  },
+});
 
   const handleNotificationClick = (notification: any) => {
     if (!notification.isRead) {
