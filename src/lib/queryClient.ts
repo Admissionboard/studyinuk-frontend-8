@@ -1,4 +1,5 @@
 import { QueryClient } from "@tanstack/react-query";
+import { supabase } from "./supabase"; // ✅ Make sure this path is correct
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
@@ -8,8 +9,10 @@ async function throwIfResNotOk(res: Response) {
 }
 
 async function getAuthHeaders(): Promise<Record<string, string>> {
-  // Get Supabase auth token if available
-  const token = localStorage.getItem("sb-access-token");
+  // ✅ Get the current session from Supabase
+  const { data, error } = await supabase.auth.getSession();
+  const token = data?.session?.access_token;
+
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
@@ -19,9 +22,9 @@ export async function apiRequest(
 ): Promise<any> {
   const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const fullUrl = `${apiUrl.replace(/\/+$/, '')}/${url.replace(/^\/+/, '')}`;
-  
+
   const authHeaders = await getAuthHeaders();
-  
+
   const response = await fetch(fullUrl, {
     ...options,
     headers: {
@@ -32,11 +35,11 @@ export async function apiRequest(
   });
 
   await throwIfResNotOk(response);
-  
+
   if (response.headers.get("content-type")?.includes("application/json")) {
     return response.json();
   }
-  
+
   return response.text();
 }
 
