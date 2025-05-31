@@ -49,6 +49,8 @@ export const getQueryFn = (options: {
   on401: UnauthorizedBehavior;
 }) => {
   return async ({ queryKey }: { queryKey: readonly unknown[] }) => {
+    console.log("🔍 queryKey received:", queryKey); // 👈 Add this line
+
     try {
       const url = Array.isArray(queryKey) ? queryKey.join("/") : String(queryKey);
       return await apiRequest(url);
@@ -60,6 +62,7 @@ export const getQueryFn = (options: {
     }
   };
 };
+
 
 export const queryClient = new QueryClient({
   defaultOptions: {
