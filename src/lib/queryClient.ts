@@ -52,28 +52,25 @@ export async function apiRequest(
 
 type UnauthorizedBehavior = "returnNull" | "throw";
 
+etype UnauthorizedBehavior = "returnNull" | "throw";
+
 export const getQueryFn = (options: {
   on401: UnauthorizedBehavior;
 }) => {
   return async ({ queryKey }: { queryKey: readonly unknown[] }) => {
-    console.log("🔍 queryKey received:", queryKey); // 👈 Add this line
+    console.log("🔍 queryKey received:", queryKey);
+
+    const url = Array.isArray(queryKey)
+      ? queryKey.filter((v) => typeof v === "string").join("/")
+      : String(queryKey);
+
+    if (!url || url.toUpperCase() === "GET" || url.toUpperCase() === "UNDEFINED") {
+      console.error("🚨 Bad or missing queryKey!", queryKey);
+      console.trace();
+      throw new Error(`⚠️ Invalid query key: ${JSON.stringify(queryKey)}`);
+    }
 
     try {
-      const url = Array.isArray(queryKey)
-  ? queryKey.filter((v) => typeof v === "string").join("/")
-  : String(queryKey);
-
-if (
-  !url ||
-  url.toUpperCase() === "GET" ||
-  url.toUpperCase() === "UNDEFINED"
-) {
-  console.error("🚨 Bad or missing queryKey!", queryKey);
-  console.trace();
-  throw new Error(`⚠️ Invalid query key: ${JSON.stringify(queryKey)}`);
-}
-  throw new Error(`⚠️ Invalid query key: ${JSON.stringify(queryKey)}`);
-}
       return await apiRequest(url);
     } catch (error: any) {
       if (error.message?.includes("401") && options.on401 === "returnNull") {
