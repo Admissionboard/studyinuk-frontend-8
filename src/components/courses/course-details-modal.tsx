@@ -36,7 +36,15 @@ export default function CourseDetailsModal({ course, isOpen, onClose, onNavigate
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto border-2 border-gray-200 shadow-xl">
+      <DialogContent
+  aria-describedby="course-details-description"
+  className="max-w-2xl max-h-[90vh] overflow-y-auto border-2 border-gray-200 shadow-xl"
+>
+  <p id="course-details-description" className="sr-only">
+    Detailed course information including university, location, IELTS score, tuition fees, and duration.
+  </p>
+
+  {/* the rest of your modal content */}
         <DialogHeader className="border-b border-gray-200 pb-4">
           <DialogTitle className="text-2xl font-bold text-gray-900">
             {course.name}
