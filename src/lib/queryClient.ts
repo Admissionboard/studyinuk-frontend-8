@@ -50,9 +50,8 @@ export async function apiRequest(
   return response.text();
 }
 
-type UnauthorizedBehavior = "returnNull" | "throw";
 
-etype UnauthorizedBehavior = "returnNull" | "throw";
+type UnauthorizedBehavior = "returnNull" | "throw";
 
 export const getQueryFn = (options: {
   on401: UnauthorizedBehavior;
