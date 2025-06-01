@@ -72,12 +72,20 @@ const { data: courses = [], isLoading: coursesLoading } = useQuery<CourseWithUni
     return titles[activeTab] || "Study in UK";
   };
 
-  // Generate dynamic SEO based on active tab and filters
-  const dynamicSEO = generateDynamicSEO();
-  const currentSEO = activeTab === "courses" ? 
-    { ...seoPages.courses, ...dynamicSEO } : 
-    activeTab === "counselors" ? seoPages.counselors :
-    activeTab === "favorites" ? seoPages.favorites :
+  const defaultSEO = {
+  title: "Study in UK",
+  description: "Find top UK universities and courses tailored for you.",
+  keywords: "UK universities, study in UK, courses, IELTS",
+  structuredData: {},
+};
+
+const dynamicSEO = generateDynamicSEO();
+const currentSEO = (() => {
+  if (activeTab === "courses") return { ...defaultSEO, ...seoPages.courses, ...dynamicSEO };
+  if (activeTab === "counselors") return { ...defaultSEO, ...seoPages.counselors };
+  if (activeTab === "favorites") return { ...defaultSEO, ...seoPages.favorites };
+  return defaultSEO;
+})();
     seoPages.courses;
 
   return (

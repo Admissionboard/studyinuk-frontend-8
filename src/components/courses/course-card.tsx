@@ -34,12 +34,17 @@ export default function CourseCard({ course, onViewDetails, isFavorite: initialF
   // Toggle favorite mutation
   const toggleFavoriteMutation = useMutation({
     mutationFn: async () => {
-      if (isFavorited) {
-        return apiRequest("DELETE", `/api/favorites/${course.id}`);
-      } else {
-        return apiRequest("POST", "/api/favorites", { courseId: course.id });
-      }
-    },
+  if (isFavorited) {
+    return apiRequest(`/api/favorites/${course.id}`, {
+      method: "DELETE",
+    });
+  } else {
+    return apiRequest(`/api/favorites`, {
+      method: "POST",
+      body: JSON.stringify({ courseId: course.id }),
+    });
+  }
+},
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/favorites"] });
       queryClient.refetchQueries({ queryKey: ["/api/favorites"] });
