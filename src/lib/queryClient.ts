@@ -63,7 +63,15 @@ export const getQueryFn = (options: {
   ? queryKey.filter((v) => typeof v === "string").join("/")
   : String(queryKey);
 
-if (!url || url.toUpperCase() === "GET") {
+if (
+  !url ||
+  url.toUpperCase() === "GET" ||
+  url.toUpperCase() === "UNDEFINED"
+) {
+  console.error("🚨 Bad or missing queryKey!", queryKey);
+  console.trace();
+  throw new Error(`⚠️ Invalid query key: ${JSON.stringify(queryKey)}`);
+}
   throw new Error(`⚠️ Invalid query key: ${JSON.stringify(queryKey)}`);
 }
       return await apiRequest(url);
