@@ -5,7 +5,7 @@
   "description": "StudyinUK Frontend Application",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build --sourcemap",
     "preview": "vite preview"
   },
   "dependencies": {

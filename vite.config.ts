@@ -11,19 +11,10 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: "dist",
-    sourcemap: false, // set to true if you want source maps for debugging
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu']
-        }
-      }
-    }
+    sourcemap: true, // ✅ allows Vercel to trace errors properly
   },
   server: {
     port: 5173,
-    host: true
-  }
+    host: true,
+  },
 });
