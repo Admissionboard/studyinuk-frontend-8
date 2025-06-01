@@ -45,27 +45,30 @@ export default function ApplicationForm({ favorites, onNavigateToCourses }: Appl
   });
 
   // Submit application mutation
-  const submitApplicationMutation = useMutation({
-    mutationFn: (data: ApplicationFormData) => 
-      apiRequest("POST", "/api/applications", data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/applications"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/notifications/unread-count"] });
-      toast({
-        title: "Application Submitted Successfully!",
-        description: "A counsellor will contact you within 6 hours.",
-      });
-      form.reset();
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to submit application.",
-        variant: "destructive",
-      });
-    },
-  });
+const submitApplicationMutation = useMutation({
+  mutationFn: (data: ApplicationFormData) =>
+    apiRequest("/api/applications", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["/api/applications"] });
+    queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
+    queryClient.invalidateQueries({ queryKey: ["/api/notifications/unread-count"] });
+    toast({
+      title: "Application Submitted Successfully!",
+      description: "A counsellor will contact you within 6 hours.",
+    });
+    form.reset();
+  },
+  onError: (error: any) => {
+    toast({
+      title: "Error",
+      description: error.message || "Failed to submit application.",
+      variant: "destructive",
+    });
+  },
+});
 
   const onSubmit = (data: ApplicationFormData) => {
     submitApplicationMutation.mutate(data);
