@@ -11,12 +11,8 @@ export default defineConfig({
     },
   },
   build: {
-    sourcemap: true, // ✅ This enables source maps for debugging
-  },
-});
-  build: {
     outDir: "dist",
-    sourcemap: false,
+    sourcemap: false, // set to true if you want source maps for debugging
     rollupOptions: {
       output: {
         manualChunks: {
