@@ -37,12 +37,11 @@ const { data: courses = [], isLoading: coursesLoading } = useQuery<CourseWithUni
     if (courseFilters.ieltsScore && courseFilters.ieltsScore !== 'All IELTS Scores') params.append('ieltsScore', courseFilters.ieltsScore);
 
     const url = `/api/courses${params.toString() ? '?' + params.toString() : ''}`;
-    return apiRequest(url); // ✅ Fixed: only pass the URL
+    return apiRequest(url); // ✅ only the URL is passed
   },
+  enabled: activeTab === "courses", // ✅ these lines must be inside useQuery config
+  staleTime: 5 * 60 * 1000,
 });
-    enabled: activeTab === "courses", // Only load when courses tab is active
-    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
-  });
 
   // Fetch favorites only when needed
   const { data: favorites = [], isLoading: favoritesLoading } = useQuery<any[]>({
