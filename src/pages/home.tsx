@@ -27,19 +27,19 @@ export default function Home() {
   const [courseFilters, setCourseFilters] = useState({ search: "", faculty: "", level: "", ieltsScore: "" });
 
   // Fetch courses with optimized loading - only when courses tab is active
-  const { data: courses = [], isLoading: coursesLoading } = useQuery<CourseWithUniversity[]>({
-    queryKey: ["/api/courses", courseFilters.search, courseFilters.faculty, courseFilters.level, courseFilters.ieltsScore],
-    queryFn: async ({ queryKey }) => {
-      const params = new URLSearchParams();
-      if (courseFilters.search) params.append('search', courseFilters.search);
-      if (courseFilters.faculty && courseFilters.faculty !== 'All Faculties') params.append('faculty', courseFilters.faculty);
-      if (courseFilters.level && courseFilters.level !== 'All Levels') params.append('level', courseFilters.level);
-      if (courseFilters.ieltsScore && courseFilters.ieltsScore !== 'All IELTS Scores') params.append('ieltsScore', courseFilters.ieltsScore);
-      
-      const url = `/api/courses${params.toString() ? '?' + params.toString() : ''}`;
-      const response = await apiRequest("GET", url);
-      return response.json();
-    },
+const { data: courses = [], isLoading: coursesLoading } = useQuery<CourseWithUniversity[]>({
+  queryKey: ["/api/courses", courseFilters.search, courseFilters.faculty, courseFilters.level, courseFilters.ieltsScore],
+  queryFn: async () => {
+    const params = new URLSearchParams();
+    if (courseFilters.search) params.append('search', courseFilters.search);
+    if (courseFilters.faculty && courseFilters.faculty !== 'All Faculties') params.append('faculty', courseFilters.faculty);
+    if (courseFilters.level && courseFilters.level !== 'All Levels') params.append('level', courseFilters.level);
+    if (courseFilters.ieltsScore && courseFilters.ieltsScore !== 'All IELTS Scores') params.append('ieltsScore', courseFilters.ieltsScore);
+
+    const url = `/api/courses${params.toString() ? '?' + params.toString() : ''}`;
+    return apiRequest(url); // ✅ Fixed: only pass the URL
+  },
+});
     enabled: activeTab === "courses", // Only load when courses tab is active
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
