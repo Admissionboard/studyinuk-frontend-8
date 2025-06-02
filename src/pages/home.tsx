@@ -147,7 +147,7 @@ const currentSEO = (() => {
           <div className="p-4 md:p-6">
             <CourseFilters filters={courseFilters} onFiltersChange={setCourseFilters} />
             
- {coursesLoading ? (
+{coursesLoading ? (
   <>
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {[...Array(6)].map((_, i) => (
@@ -169,18 +169,18 @@ const currentSEO = (() => {
     </div>
   </>
 ) : (
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    {courses.map((course) => (
-      <CourseCard
-        key={course.id}
-        course={course}
-        onViewDetails={setSelectedCourse}
-      />
-    ))}
-  </div>
+  <>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {courses.map((course) => (
+        <CourseCard
+          key={course.id}
+          course={course}
+          onViewDetails={setSelectedCourse}
+        />
+      ))}
+    </div>
+  </>
 )}
-              </div>
-            )}
 
             {!coursesLoading && courses.length === 0 && (
               <div className="text-center py-12">
