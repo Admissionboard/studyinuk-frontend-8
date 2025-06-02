@@ -148,26 +148,12 @@ const currentSEO = (() => {
             <CourseFilters filters={courseFilters} onFiltersChange={setCourseFilters} />
             
 {coursesLoading ? (
-  <>
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {[...Array(6)].map((_, i) => (
-        <div
-          key={i}
-          className="bg-white rounded-xl shadow-sm border border-gray-200 animate-pulse"
-        >
-          <div className="w-full h-48 bg-gray-200"></div>
-          <div className="p-5 space-y-3">
-            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-            <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-            <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-          </div>
-        </div>
-      ))}
-    </div>
-    <div className="text-center mt-6">
-      <p className="text-sm text-gray-500">⏳ Large Course Data Loading...</p>
-    </div>
-  </>
+  <div className="flex flex-col items-center justify-center min-h-[300px]">
+    <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-blue-500 border-opacity-50 mb-4"></div>
+    <p className="text-gray-700 text-sm sm:text-base font-medium">
+      ⏳ Loading courses... please wait.
+    </p>
+  </div>
 ) : (
   <>
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
