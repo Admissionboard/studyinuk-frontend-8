@@ -58,7 +58,11 @@ export default function NotificationManagement() {
 
   // Send notification mutation
   const sendNotificationMutation = useMutation({
-    mutationFn: (data: any) => apiRequest("POST", "/api/admin/notifications", data),
+    mutationFn: (data: any) =>
+  apiRequest("/api/admin/notifications", {
+    method: "POST",
+    body: JSON.stringify(data),
+  }),
     onSuccess: (response: any) => {
       toast({
         title: "Notification Sent Successfully!",

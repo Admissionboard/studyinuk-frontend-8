@@ -231,7 +231,11 @@ function CreateCourseForm() {
   });
 
   const createCourseMutation = useMutation({
-    mutationFn: (data: InsertCourse) => apiRequest("POST", "/api/admin/courses", data),
+    mutationFn: (data: InsertCourse) =>
+  apiRequest("/api/admin/courses", {
+    method: "POST",
+    body: JSON.stringify(data),
+  }),
     onSuccess: () => {
       toast({ title: "Course created successfully!" });
       queryClient.invalidateQueries({ queryKey: ["/api/courses"] });
@@ -349,7 +353,11 @@ function CreateUniversityForm() {
   });
 
   const createUniversityMutation = useMutation({
-    mutationFn: (data: InsertUniversity) => apiRequest("POST", "/api/admin/universities", data),
+    mutationFn: (data: InsertUniversity) =>
+  apiRequest("/api/admin/universities", {
+    method: "POST",
+    body: JSON.stringify(data),
+  }),
     onSuccess: () => {
       toast({ title: "University created successfully!" });
       queryClient.invalidateQueries({ queryKey: ["/api/universities"] });

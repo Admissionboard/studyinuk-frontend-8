@@ -50,7 +50,10 @@ export default function LeadManagement() {
 
   // Send invitation email mutation
   const sendInvitationMutation = useMutation({
-    mutationFn: (leadId: number) => apiRequest("POST", `/api/admin/leads/${leadId}/invite`),
+    mutationFn: (leadId: number) =>
+  apiRequest(`/api/admin/leads/${leadId}/invite`, {
+    method: "POST",
+  }),
     onSuccess: () => {
       toast({ title: "Invitation sent successfully!" });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/leads"] });
@@ -59,7 +62,10 @@ export default function LeadManagement() {
 
   // Send WhatsApp message mutation
   const sendWhatsAppMutation = useMutation({
-    mutationFn: (leadId: number) => apiRequest("POST", `/api/admin/leads/${leadId}/whatsapp`),
+    mutationFn: (leadId: number) =>
+  apiRequest(`/api/admin/leads/${leadId}/whatsapp`, {
+    method: "POST",
+  }),
     onSuccess: () => {
       toast({ title: "WhatsApp message sent successfully!" });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/leads"] });
@@ -327,7 +333,11 @@ function CreateLeadForm({ onClose }: { onClose: () => void }) {
   });
 
   const createLeadMutation = useMutation({
-    mutationFn: (data: InsertLead) => apiRequest("POST", "/api/admin/leads", data),
+    mutationFn: (data: InsertLead) =>
+  apiRequest("/api/admin/leads", {
+    method: "POST",
+    body: JSON.stringify(data),
+  }),
     onSuccess: () => {
       toast({ title: "Lead created successfully!" });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/leads"] });

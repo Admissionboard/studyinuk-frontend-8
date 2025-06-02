@@ -57,7 +57,7 @@ export default function ProfessionalAdminDashboard() {
 
   // Data queries
   const { data: stats, isLoading: statsLoading } = useQuery({
-    queryKey: ["/api/admin/stats", "v2"],
+    queryKey: ["/api/admin/stats"],
   });
 
   const { data: applications = [], isLoading: appsLoading } = useQuery({
@@ -102,7 +102,11 @@ export default function ProfessionalAdminDashboard() {
 });
 
   const createLead = useMutation({
-    mutationFn: (leadData: any) => apiRequest("POST", "/api/admin/leads", leadData),
+    mutationFn: (leadData: any) =>
+  apiRequest("/api/admin/leads", {
+    method: "POST",
+    body: JSON.stringify(leadData),
+  }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/leads"] });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/stats"] });
