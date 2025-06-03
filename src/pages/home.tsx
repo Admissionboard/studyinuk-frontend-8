@@ -23,9 +23,9 @@ import type { CourseWithUniversity, Counselor } from "@/types";
 
 export default function Home() {
 const { user } = useAuth();
-const \[activeTab, setActiveTab] = useState("courses");
-const \[selectedCourse, setSelectedCourse] = useState\<CourseWithUniversity | null>(null);
-const \[courseFilters, setCourseFilters] = useState({
+const [activeTab, setActiveTab] = useState("courses");
+const [selectedCourse, setSelectedCourse] = useState<CourseWithUniversity | null>(null);
+const [courseFilters, setCourseFilters] = useState({
 search: "",
 faculty: "",
 level: "",
