@@ -31,15 +31,15 @@ faculty: "",
 level: "",
 ieltsScore: "",
 });
-const \[page, setPage] = useState(1);
+const [page, setPage] = useState(1);
 
 const resetFilters = () => {
 setCourseFilters({ search: "", faculty: "", level: "", ieltsScore: "" });
 setPage(1);
 };
 
-const { data: courses = \[], isLoading: coursesLoading } = useQuery\<CourseWithUniversity\[]>({
-queryKey: \["/api/courses", courseFilters.search, courseFilters.faculty, courseFilters.level, courseFilters.ieltsScore],
+const { data: courses = [], isLoading: coursesLoading } = useQuery\<CourseWithUniversity[]>({
+queryKey: ["/api/courses", courseFilters.search, courseFilters.faculty, courseFilters.level, courseFilters.ieltsScore],
 queryFn: async () => {
 const params = new URLSearchParams();
 if (courseFilters.search) params.append("search", courseFilters.search);
@@ -53,14 +53,14 @@ enabled: activeTab === "courses",
 staleTime: 5 \* 60 \* 1000,
 });
 
-const { data: favorites = \[], isLoading: favoritesLoading } = useQuery\<any\[]>({
-queryKey: \["/api/favorites"],
+const { data: favorites = [], isLoading: favoritesLoading } = useQuery\<any[]>({
+queryKey: ["/api/favorites"],
 enabled: !!user && activeTab === "favorites",
 staleTime: 5 \* 60 \* 1000,
 });
 
-const { data: counselors = \[], isLoading: counselorsLoading } = useQuery\<Counselor\[]>({
-queryKey: \["/api/counselors"],
+const { data: counselors = [], isLoading: counselorsLoading } = useQuery\<Counselor[]>({
+queryKey: ["/api/counselors"],
 enabled: activeTab === "counselors",
 staleTime: 5 \* 60 \* 1000,
 });
@@ -75,7 +75,7 @@ counselors: "Education Counsellors",
 apply: "Submit Application",
 dashboard: "My Dashboard",
 };
-return titles\[activeTab] || "Study in UK";
+return titles[activeTab] || "Study in UK";
 };
 
 const dynamicSEO = generateDynamicSEO();
