@@ -24,15 +24,28 @@ export default function Home() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("courses");
   const [selectedCourse, setSelectedCourse] = useState<CourseWithUniversity | null>(null);
-  const resetFilters = () => {
-  setCourseFilters({
+
+  // ✅ Define courseFilters state
+  const [courseFilters, setCourseFilters] = useState({
     search: "",
     faculty: "",
     level: "",
-    ieltsScore: ""
+    ieltsScore: "",
   });
-  setPage(1); // This resets the pagination to the first page
-};
+
+  // ✅ Define page state for pagination reset
+  const [page, setPage] = useState(1);
+
+  // ✅ Reset function for filters and page
+  const resetFilters = () => {
+    setCourseFilters({
+      search: "",
+      faculty: "",
+      level: "",
+      ieltsScore: "",
+    });
+    setPage(1); // Reset pagination to page 1
+  };
   // Fetch courses with optimized loading - only when courses tab is active
 const { data: courses = [], isLoading: coursesLoading } = useQuery<CourseWithUniversity[]>({
   queryKey: ["/api/courses", courseFilters.search, courseFilters.faculty, courseFilters.level, courseFilters.ieltsScore],
