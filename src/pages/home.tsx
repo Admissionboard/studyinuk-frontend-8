@@ -165,11 +165,9 @@ const currentSEO = (() => {
 {/* Courses Tab */}
 {activeTab === "courses" && (
   <div className="p-4 md:p-6">
+    {/* Filters and Reset Button */}
     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
-      <CourseFilters
-        filters={courseFilters}
-        onFiltersChange={setCourseFilters}
-      />
+      <CourseFilters filters={courseFilters} onFiltersChange={setCourseFilters} />
       <Button
         onClick={resetFilters}
         className="bg-primary text-white hover:bg-blue-700 transition duration-200"
@@ -178,6 +176,7 @@ const currentSEO = (() => {
       </Button>
     </div>
 
+    {/* Course Content */}
     {coursesLoading ? (
       <div className="flex flex-col items-center justify-center min-h-[300px]">
         <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-blue-500 border-opacity-50 mb-4"></div>
@@ -186,17 +185,15 @@ const currentSEO = (() => {
         </p>
       </div>
     ) : (
-      <>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {courses.map((course) => (
-            <CourseCard
-              key={course.id}
-              course={course}
-              onViewDetails={setSelectedCourse}
-            />
-          ))}
-        </div>
-      </>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {courses.map((course) => (
+          <CourseCard
+            key={course.id}
+            course={course}
+            onViewDetails={setSelectedCourse}
+          />
+        ))}
+      </div>
     )}
   </div>
 )}
