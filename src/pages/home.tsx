@@ -38,7 +38,7 @@ setCourseFilters({ search: "", faculty: "", level: "", ieltsScore: "" });
 setPage(1);
 };
 
-const { data: courses = [], isLoading: coursesLoading } = useQuery\<CourseWithUniversity[]>({
+const { data: courses = [], isLoading: coursesLoading } = useQuery<CourseWithUniversity[]>({
 queryKey: ["/api/courses", courseFilters.search, courseFilters.faculty, courseFilters.level, courseFilters.ieltsScore],
 queryFn: async () => {
 const params = new URLSearchParams();
@@ -53,13 +53,13 @@ enabled: activeTab === "courses",
 staleTime: 5 \* 60 \* 1000,
 });
 
-const { data: favorites = [], isLoading: favoritesLoading } = useQuery\<any[]>({
+const { data: favorites = [], isLoading: favoritesLoading } = useQuery<any[]>({
 queryKey: ["/api/favorites"],
 enabled: !!user && activeTab === "favorites",
 staleTime: 5 \* 60 \* 1000,
 });
 
-const { data: counselors = [], isLoading: counselorsLoading } = useQuery\<Counselor[]>({
+const { data: counselors = [], isLoading: counselorsLoading } = useQuery<Counselor[]>({
 queryKey: ["/api/counselors"],
 enabled: activeTab === "counselors",
 staleTime: 5 \* 60 \* 1000,
@@ -68,7 +68,7 @@ staleTime: 5 \* 60 \* 1000,
 const handleTabChange = (tab: string) => setActiveTab(tab);
 
 const getPageTitle = () => {
-const titles: Record\<string, string> = {
+const titles: Record<string, string> = {
 courses: "Courses",
 favorites: "Favorite Courses",
 counselors: "Education Counsellors",
@@ -88,7 +88,7 @@ const currentSEO = activeTab === "courses"
 : seoPages.courses;
 
 return ( <div className="min-h-screen bg-slate-50">
-\<SEOHead
+<SEOHead
 title={currentSEO.title}
 description={currentSEO.description}
 keywords={currentSEO.keywords}
