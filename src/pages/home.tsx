@@ -50,19 +50,19 @@ const url = `/api/courses${params.toString() ? "?" + params.toString() : ""}`;
 return apiRequest(url);
 },
 enabled: activeTab === "courses",
-staleTime: 5 \* 60 \* 1000,
+staleTime: 5 * 60 * 1000,
 });
 
 const { data: favorites = [], isLoading: favoritesLoading } = useQuery<any[]>({
 queryKey: ["/api/favorites"],
 enabled: !!user && activeTab === "favorites",
-staleTime: 5 \* 60 \* 1000,
+staleTime: 5 * 60 * 1000,
 });
 
 const { data: counselors = [], isLoading: counselorsLoading } = useQuery<Counselor[]>({
 queryKey: ["/api/counselors"],
 enabled: activeTab === "counselors",
-staleTime: 5 \* 60 \* 1000,
+staleTime: 5 * 60 * 1000,
 });
 
 const handleTabChange = (tab: string) => setActiveTab(tab);
