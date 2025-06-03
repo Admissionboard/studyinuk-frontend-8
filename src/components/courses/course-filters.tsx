@@ -46,7 +46,7 @@ export default function CourseFilters({ filters, onFiltersChange }: CourseFilter
             />
           </div>
         </div>
-        
+
         <Select
           value={filters.faculty}
           onValueChange={(value) =>
@@ -100,6 +100,23 @@ export default function CourseFilters({ filters, onFiltersChange }: CourseFilter
             ))}
           </SelectContent>
         </Select>
+      </div>
+
+      {/* ✅ Reset Button */}
+      <div className="flex justify-end mt-2">
+        <button
+          onClick={() =>
+            onFiltersChange({
+              search: "",
+              faculty: "",
+              level: "",
+              ieltsScore: "",
+            })
+          }
+          className="text-sm px-4 py-2 rounded bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700 transition"
+        >
+          Reset Filters
+        </button>
       </div>
     </div>
   );
