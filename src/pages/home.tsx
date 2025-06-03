@@ -165,7 +165,6 @@ const currentSEO = (() => {
 {/* Courses Tab */}
 {activeTab === "courses" && (
   <div className="p-4 md:p-6">
-    {/* Filters and Reset Button */}
     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
       <CourseFilters filters={courseFilters} onFiltersChange={setCourseFilters} />
       <Button
@@ -176,7 +175,6 @@ const currentSEO = (() => {
       </Button>
     </div>
 
-    {/* Course Content */}
     {coursesLoading ? (
       <div className="flex flex-col items-center justify-center min-h-[300px]">
         <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-blue-500 border-opacity-50 mb-4"></div>
