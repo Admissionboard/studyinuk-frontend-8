@@ -106,8 +106,6 @@ const currentSEO = (() => {
   if (activeTab === "favorites") return { ...defaultSEO, ...seoPages.favorites };
   return defaultSEO;
 })();
-    seoPages.courses;
-
   return (
     <div className="min-h-screen bg-slate-50">
       <SEOHead
