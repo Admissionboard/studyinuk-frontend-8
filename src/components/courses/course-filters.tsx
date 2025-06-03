@@ -2,6 +2,7 @@ import { Search } from "@/lib/icons";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
 
 interface CourseFiltersProps {
   filters: {
@@ -11,15 +12,14 @@ interface CourseFiltersProps {
     ieltsScore: string;
   };
   onFiltersChange: (filters: { search: string; faculty: string; level: string; ieltsScore: string }) => void;
+  onReset: () => void;
 }
 
-export default function CourseFilters({ filters, onFiltersChange }: CourseFiltersProps) {
-  // Fetch all courses to get unique faculty values
+export default function CourseFilters({ filters, onFiltersChange, onReset }: CourseFiltersProps) {
   const { data: courses = [] } = useQuery<any[]>({
     queryKey: ["/api/courses"],
   });
 
-  // Extract unique values from courses
   const uniqueFaculties = Array.from(new Set(courses.map(course => course.faculty).filter(Boolean)));
   const faculties = ["All Faculties", ...uniqueFaculties];
 
@@ -103,20 +103,14 @@ export default function CourseFilters({ filters, onFiltersChange }: CourseFilter
       </div>
 
       {/* ✅ Reset Button */}
-      <div className="flex justify-end mt-2">
-        <button
-          onClick={() =>
-            onFiltersChange({
-              search: "",
-              faculty: "",
-              level: "",
-              ieltsScore: "",
-            })
-          }
-          className="text-sm px-4 py-2 rounded bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700 transition"
+      <div className="text-right">
+        <Button
+          onClick={onReset}
+          variant="outline"
+          className="bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
         >
           Reset Filters
-        </button>
+        </Button>
       </div>
     </div>
   );
