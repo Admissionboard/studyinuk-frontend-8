@@ -284,7 +284,5 @@ structuredData={currentSEO.structuredData}
 
   <FloatingActionButton onQuickApply={() => setActiveTab("apply")} />
 </div>
-```
-
 );
 }
