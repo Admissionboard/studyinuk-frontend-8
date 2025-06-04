@@ -1,8 +1,14 @@
 import { Search } from "@/lib/icons";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useQuery } from "@tanstack/react-query";
 
 interface CourseFiltersProps {
   filters: {
@@ -11,27 +17,42 @@ interface CourseFiltersProps {
     level: string;
     ieltsScore: string;
   };
-  onFiltersChange: (filters: { search: string; faculty: string; level: string; ieltsScore: string }) => void;
-  onReset: () => void;
+  onFiltersChange: (filters: {
+    search: string;
+    faculty: string;
+    level: string;
+    ieltsScore: string;
+  }) => void;
+  onReset?: () => void; // <-- Add this line
 }
 
-export default function CourseFilters({ filters, onFiltersChange, onReset }: CourseFiltersProps) {
+export default function CourseFilters({
+  filters,
+  onFiltersChange,
+  onReset, // <-- Accept the reset function
+}: CourseFiltersProps) {
   const { data: courses = [] } = useQuery<any[]>({
     queryKey: ["/api/courses"],
   });
 
-  const uniqueFaculties = Array.from(new Set(courses.map(course => course.faculty).filter(Boolean)));
+  const uniqueFaculties = Array.from(
+    new Set(courses.map((course) => course.faculty).filter(Boolean))
+  );
   const faculties = ["All Faculties", ...uniqueFaculties];
 
-  const uniqueLevels = Array.from(new Set(courses.map(course => course.level).filter(Boolean)));
+  const uniqueLevels = Array.from(
+    new Set(courses.map((course) => course.level).filter(Boolean))
+  );
   const levels = ["All Levels", ...uniqueLevels];
 
-  const uniqueIeltsScores = Array.from(new Set(courses.map(course => course.ieltsOverall).filter(Boolean)));
+  const uniqueIeltsScores = Array.from(
+    new Set(courses.map((course) => course.ieltsOverall).filter(Boolean))
+  );
   const ieltsScores = ["All IELTS Scores", ...uniqueIeltsScores];
 
   return (
     <div className="mb-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4 bg-[#ffffff]">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 bg-white">
         <div className="lg:col-span-1">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -53,7 +74,7 @@ export default function CourseFilters({ filters, onFiltersChange, onReset }: Cou
             onFiltersChange({ ...filters, faculty: value })
           }
         >
-          <SelectTrigger className="bg-white border-gray-300 hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+          <SelectTrigger>
             <SelectValue placeholder="Faculty" />
           </SelectTrigger>
           <SelectContent>
@@ -71,8 +92,8 @@ export default function CourseFilters({ filters, onFiltersChange, onReset }: Cou
             onFiltersChange({ ...filters, level: value })
           }
         >
-          <SelectTrigger className="bg-white border-gray-300 hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
-            <SelectValue placeholder="Course Level" />
+          <SelectTrigger>
+            <SelectValue placeholder="Level" />
           </SelectTrigger>
           <SelectContent>
             {levels.map((level) => (
@@ -89,7 +110,7 @@ export default function CourseFilters({ filters, onFiltersChange, onReset }: Cou
             onFiltersChange({ ...filters, ieltsScore: value })
           }
         >
-          <SelectTrigger className="bg-white border-gray-300 hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+          <SelectTrigger>
             <SelectValue placeholder="IELTS Score" />
           </SelectTrigger>
           <SelectContent>
@@ -102,16 +123,17 @@ export default function CourseFilters({ filters, onFiltersChange, onReset }: Cou
         </Select>
       </div>
 
-      {/* ✅ Reset Button */}
-      <div className="text-right">
-        <Button
-          onClick={onReset}
-          variant="outline"
-          className="bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
-        >
-          Reset Filters
-        </Button>
-      </div>
+      {/* Reset Button - placed BELOW filters */}
+      {onReset && (
+        <div className="mt-4">
+          <Button
+            onClick={onReset}
+            className="bg-primary text-white hover:bg-blue-700 transition duration-200"
+          >
+            🔄 Reset Filters
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
