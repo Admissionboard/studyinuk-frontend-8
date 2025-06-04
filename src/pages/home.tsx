@@ -18,6 +18,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 import type { CourseWithUniversity, Counselor } from "@/types";
 import { Button } from "@/components/ui/button";
+import CounselorCard from "@/components/counselors/counselor-card";
 
 export default function Home() {
 const { user } = useAuth();
