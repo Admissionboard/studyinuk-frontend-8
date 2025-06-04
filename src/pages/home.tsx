@@ -47,7 +47,7 @@ if (courseFilters.search) params.append("search", courseFilters.search);
 if (courseFilters.faculty && courseFilters.faculty !== "All Faculties") params.append("faculty", courseFilters.faculty);
 if (courseFilters.level && courseFilters.level !== "All Levels") params.append("level", courseFilters.level);
 if (courseFilters.ieltsScore && courseFilters.ieltsScore !== "All IELTS Scores") params.append("ieltsScore", courseFilters.ieltsScore);
-const url = `/api/courses${params.toString() ? `?\${params.toString()}` : ""}`;
+const url = `/api/courses${params.toString() ? `?${params.toString()}` : ""}`;
 return apiRequest(url);
 },
 enabled: activeTab === "courses",
@@ -103,7 +103,6 @@ canonicalUrl={`https://studyinuk.co/${activeTab === "courses" ? "" : activeTab}`
 structuredData={currentSEO.structuredData}
 />
 
-```
   <Navbar activeTab={activeTab} onTabChange={handleTabChange} />
   <MobileNav activeTab={activeTab} onTabChange={handleTabChange} />
 
