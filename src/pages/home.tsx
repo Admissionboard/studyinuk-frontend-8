@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import Navbar from "@/components/layout/navbar";
 import MobileNav from "@/components/layout/mobile-nav";
@@ -39,7 +39,6 @@ setCourseFilters({ search: "", faculty: "", level: "", ieltsScore: "" });
 setPage(1);
 };
 
-import { useInfiniteQuery } from "@tanstack/react-query";
 
 const {
   data,
