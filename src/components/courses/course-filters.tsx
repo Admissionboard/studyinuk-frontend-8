@@ -38,17 +38,17 @@ queryKey: ["/api/courses"],
 const uniqueFaculties = Array.from(
 new Set(courses.map((course) => course.faculty).filter(Boolean))
 );
-const faculties = ["All Faculties", …uniqueFaculties];
+const faculties = ["All Faculties", ...uniqueFaculties];
 
 const uniqueLevels = Array.from(
 new Set(courses.map((course) => course.level).filter(Boolean))
 );
-const levels = ["All Levels", …uniqueLevels];
+const levels = ["All Levels", ...uniqueLevels];
 
 const uniqueIeltsScores = Array.from(
 new Set(courses.map((course) => course.ieltsOverall).filter(Boolean))
 );
-const ieltsScores = ["All IELTS Scores", …uniqueIeltsScores];
+const ieltsScores = ["All IELTS Scores", ...uniqueIeltsScores];
 
 return (
 
@@ -58,10 +58,10 @@ return (
 
 <Input
 type="text"
-placeholder="Search courses…"
+placeholder="Search courses..."
 value={filters.search}
 onChange={(e) =>
-onFiltersChange({ …filters, search: e.target.value })
+onFiltersChange({ ...filters, search: e.target.value })
 }
 className="pl-10"
 />
