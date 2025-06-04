@@ -145,8 +145,11 @@ structuredData={currentSEO.structuredData}
 
     {activeTab === "courses" && (
 <div className="mb-4">
-  <CourseFilters filters={courseFilters} onFiltersChange={setCourseFilters} onReset={resetFilters} />
-</div>
+<CourseFilters
+  filters={courseFilters}
+  onFiltersChange={setCourseFilters}
+  onReset={resetFilters}
+/>
 
         {coursesLoading ? (
           <div className="flex flex-col items-center justify-center min-h-[300px]">
