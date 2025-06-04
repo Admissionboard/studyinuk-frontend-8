@@ -1,14 +1,14 @@
-import { Search } from “@/lib/icons”;
-import { Input } from “@/components/ui/input”;
-import { Button } from “@/components/ui/button”;
+import { Search } from "@/lib/icons";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
 Select,
 SelectContent,
 SelectItem,
 SelectTrigger,
 SelectValue,
-} from “@/components/ui/select”;
-import { useQuery } from “@tanstack/react-query”;
+} from "@/components/ui/select";
+import { useQuery } from "@tanstack/react-query";
 
 interface CourseFiltersProps {
 filters: {
@@ -32,23 +32,23 @@ onFiltersChange,
 onReset,
 }: CourseFiltersProps) {
 const { data: courses = [] } = useQuery<any[]>({
-queryKey: [”/api/courses”],
+queryKey: ["/api/courses"],
 });
 
 const uniqueFaculties = Array.from(
 new Set(courses.map((course) => course.faculty).filter(Boolean))
 );
-const faculties = [“All Faculties”, …uniqueFaculties];
+const faculties = ["All Faculties", …uniqueFaculties];
 
 const uniqueLevels = Array.from(
 new Set(courses.map((course) => course.level).filter(Boolean))
 );
-const levels = [“All Levels”, …uniqueLevels];
+const levels = ["All Levels", …uniqueLevels];
 
 const uniqueIeltsScores = Array.from(
 new Set(courses.map((course) => course.ieltsOverall).filter(Boolean))
 );
-const ieltsScores = [“All IELTS Scores”, …uniqueIeltsScores];
+const ieltsScores = ["All IELTS Scores", …uniqueIeltsScores];
 
 return (
 
@@ -57,13 +57,13 @@ return (
 
 
 <Input
-type=“text”
-placeholder=“Search courses…”
+type="text"
+placeholder="Search courses…"
 value={filters.search}
 onChange={(e) =>
 onFiltersChange({ …filters, search: e.target.value })
 }
-className=“pl-10”
+className="pl-10"
 />
 
 
