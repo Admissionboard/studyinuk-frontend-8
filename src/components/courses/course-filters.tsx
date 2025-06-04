@@ -124,8 +124,9 @@ export default function CourseFilters({
           <div className="lg:col-span-4 flex justify-end mt-2">
             <Button
               onClick={onReset}
-              className="bg-blue-600 text-white hover:bg-blue-700 px-6 py-2 rounded-md"
-            >
+              variant="outline"
+  className="text-sm text-gray-700 border-gray-300 hover:bg-gray-100"
+>
               🔄 Reset Filters
             </Button>
           </div>
