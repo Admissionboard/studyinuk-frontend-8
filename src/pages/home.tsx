@@ -39,25 +39,33 @@ setCourseFilters({ search: "", faculty: "", level: "", ieltsScore: "" });
 setPage(1);
 };
 
-const { data: courses = [], isLoading: coursesLoading } = useQuery<CourseWithUniversity[]>({
-queryKey: ["/api/courses", courseFilters.search, courseFilters.faculty, courseFilters.level, courseFilters.ieltsScore],
-queryFn: async () => {
-const params = new URLSearchParams();
-if (courseFilters.search) params.append("search", courseFilters.search);
-if (courseFilters.faculty && courseFilters.faculty !== "All Faculties") params.append("faculty", courseFilters.faculty);
-if (courseFilters.level && courseFilters.level !== "All Levels") params.append("level", courseFilters.level);
-if (courseFilters.ieltsScore && courseFilters.ieltsScore !== "All IELTS Scores") params.append("ieltsScore", courseFilters.ieltsScore);
-const url = `/api/courses${params.toString() ? `?${params.toString()}` : ""}`;
-return apiRequest(url);
-},
-enabled: activeTab === "courses",
-staleTime: 5 * 60 * 1000,
-});
+import { useInfiniteQuery } from "@tanstack/react-query";
 
-const { data: favorites = [], isLoading: favoritesLoading } = useQuery<any[]>({
-queryKey: ["/api/favorites"],
-enabled: !!user && activeTab === "favorites",
-staleTime: 5 * 60 * 1000,
+const {
+  data,
+  isLoading: coursesLoading,
+  fetchNextPage,
+  hasNextPage,
+  isFetchingNextPage,
+} = useInfiniteQuery({
+  queryKey: ["courses", courseFilters],
+  queryFn: async ({ pageParam = 0 }) => {
+    const params = new URLSearchParams();
+    if (courseFilters.search) params.append("search", courseFilters.search);
+    if (courseFilters.faculty && courseFilters.faculty !== "All Faculties") params.append("faculty", courseFilters.faculty);
+    if (courseFilters.level && courseFilters.level !== "All Levels") params.append("level", courseFilters.level);
+    if (courseFilters.ieltsScore && courseFilters.ieltsScore !== "All IELTS Scores") params.append("ieltsScore", courseFilters.ieltsScore);
+    params.append("limit", "100");
+    params.append("offset", pageParam.toString());
+    const url = `/api/courses?${params.toString()}`;
+    return apiRequest(url);
+  },
+  getNextPageParam: (lastPage, allPages) => {
+    if (lastPage.length < 100) return undefined; // No more data
+    return allPages.length * 100; // Next offset
+  },
+  enabled: activeTab === "courses",
+  staleTime: 5 * 60 * 1000,
 });
 
 const { data: counselors = [], isLoading: counselorsLoading } = useQuery<Counselor[]>({
@@ -152,17 +160,45 @@ structuredData={currentSEO.structuredData}
 />
 
         {coursesLoading ? (
-          <div className="flex flex-col items-center justify-center min-h-[300px]">
-            <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-blue-500 border-opacity-50 mb-4"></div>
-            <p className="text-gray-700 text-sm sm:text-base font-medium">⏳ Loading courses... please wait.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {courses.map((course) => (
-              <CourseCard key={course.id} course={course} onViewDetails={setSelectedCourse} />
-            ))}
-          </div>
-        )}
+  <div className="flex flex-col items-center justify-center min-h-[300px] p-6">
+    <div className="w-12 h-12 border-4 border-blue-500 border-dashed rounded-full animate-spin-slow mb-4"></div>
+    <p className="text-lg font-semibold text-gray-800">Loading Courses...</p>
+    <p className="text-sm text-gray-500 mt-1">
+      Please wait <span id="countdown">30</span> seconds while we fetch over 600 course records.
+    </p>
+    <script dangerouslySetInnerHTML={{
+      __html: `
+        let seconds = 30;
+        const countdownEl = document.getElementById("countdown");
+        const interval = setInterval(() => {
+          seconds--;
+          if (countdownEl) countdownEl.textContent = seconds;
+          if (seconds <= 0) clearInterval(interval);
+        }, 1000);
+      `
+    }} />
+  </div>
+) : (
+  <>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {data?.pages.flat().map((course) => (
+        <CourseCard key={course.id} course={course} onViewDetails={setSelectedCourse} />
+      ))}
+    </div>
+
+    {hasNextPage && (
+      <div className="flex justify-center mt-6">
+        <button
+          onClick={() => fetchNextPage()}
+          disabled={isFetchingNextPage}
+          className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-lg transition"
+        >
+          {isFetchingNextPage ? "Loading more..." : "Load More"}
+        </button>
+      </div>
+    )}
+  </>
+)}
 
         {!coursesLoading && courses.length === 0 && (
           <div className="text-center py-12">
