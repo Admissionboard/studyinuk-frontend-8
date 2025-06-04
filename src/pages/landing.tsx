@@ -162,7 +162,7 @@ export default function Landing() {
             Ready to Start Your UK Education Journey?
           </h2>
           <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of Bangladeshi students who have successfully started their UK education journey with our platform.
+            Join hundreds of Bangladeshi students who have successfully started their UK education journey with our platform.
           </p>
           <Link href="/login">
             <Button 
