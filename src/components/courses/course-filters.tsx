@@ -124,16 +124,14 @@ export default function CourseFilters({
       </div>
 
       {/* Reset Button - placed BELOW filters */}
-      {onReset && (
-        <div className="mt-4">
-          <Button
-            onClick={onReset}
-            className="bg-primary text-white hover:bg-blue-700 transition duration-200"
-          >
-            🔄 Reset Filters
-          </Button>
-        </div>
-      )}
+{onReset && (
+    <div className="lg:col-span-1 flex items-end justify-end">
+      <Button
+        onClick={onReset}
+        className="w-full bg-primary text-white hover:bg-blue-700 transition duration-200"
+      >
+        🔄 Reset Filters
+      </Button>
     </div>
-  );
-}
+  )}
+</div>
