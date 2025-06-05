@@ -217,8 +217,12 @@ structuredData={currentSEO.structuredData}
     {activeTab === "favorites" && (
       <div className="p-4 md:p-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-6 md:hidden">Favorite Courses</h2>
-        {favorites ? (
-  // Show favorites
+ {favorites ? (
+  <>
+    {/* Show favorites */}
+    {/* Replace this with your favorite list component */}
+    <div>Favorites will be shown here</div>
+  </>
 ) : (
   <div>Loading...</div>
 )}
