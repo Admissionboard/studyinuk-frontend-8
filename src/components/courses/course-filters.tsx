@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Search } from "@/lib/icons";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,7 +9,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useQuery } from "@tanstack/react-query";
 
 interface CourseFiltersProps {
   filters: {
@@ -31,39 +31,40 @@ export default function CourseFilters({
   onFiltersChange,
   onReset,
 }: CourseFiltersProps) {
-  const { data: courses = [] } = useQuery<any[]>({
-    queryKey: ["/api/courses"],
-  });
+  const [faculties, setFaculties] = useState<string[]>([]);
+  const [levels, setLevels] = useState<string[]>([]);
+  const [ieltsScores, setIeltsScores] = useState<string[]>([]);
 
-  const uniqueFaculties = Array.from(
-    new Set(courses.map((course) => course.faculty).filter(Boolean))
-  );
-  const faculties = ["All Faculties", ...uniqueFaculties];
-
-  const uniqueLevels = Array.from(
-    new Set(courses.map((course) => course.level).filter(Boolean))
-  );
-  const levels = ["All Levels", ...uniqueLevels];
-
-  const uniqueIeltsScores = Array.from(
-    new Set(courses.map((course) => course.ieltsOverall).filter(Boolean))
-  );
-  const ieltsScores = ["All IELTS Scores", ...uniqueIeltsScores];
+  useEffect(() => {
+    const fetchFilters = async () => {
+      const [facRes, levelRes, ieltsRes] = await Promise.all([
+        fetch("/api/filters/faculties").then((res) => res.json()),
+        fetch("/api/filters/levels").then((res) => res.json()),
+        fetch("/api/filters/ielts-scores").then((res) => res.json()),
+      ]);
+      setFaculties(["All Faculties", ...facRes]);
+      setLevels(["All Levels", ...levelRes]);
+      setIeltsScores(["All IELTS Scores", ...ieltsRes]);
+    };
+    fetchFilters();
+  }, []);
 
   return (
-    <div className="mb-6 bg-white p-4 rounded-xl border border-gray-200">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-          <Input
-            type="text"
-            placeholder="Search courses..."
-            value={filters.search}
-            onChange={(e) =>
-              onFiltersChange({ ...filters, search: e.target.value })
-            }
-            className="pl-10"
-          />
+    <div className="mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 bg-white">
+        <div className="lg:col-span-1">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input
+              type="text"
+              placeholder="Search courses..."
+              value={filters.search}
+              onChange={(e) =>
+                onFiltersChange({ ...filters, search: e.target.value })
+              }
+              className="pl-10"
+            />
+          </div>
         </div>
 
         <Select
@@ -119,19 +120,18 @@ export default function CourseFilters({
             ))}
           </SelectContent>
         </Select>
-
-        {onReset && (
-          <div className="lg:col-span-4 flex justify-end mt-2">
-            <Button
-              onClick={onReset}
-              variant="outline"
-  className="text-sm text-gray-700 border-gray-300 hover:bg-gray-100"
->
-              🔄 Reset Filters
-            </Button>
-          </div>
-        )}
       </div>
+
+      {onReset && (
+        <div className="lg:col-span-1 flex items-end justify-end mt-4">
+          <Button
+            onClick={onReset}
+            className="w-full bg-primary text-white hover:bg-blue-700 transition duration-200"
+          >
+            🔄 Reset Filters
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
