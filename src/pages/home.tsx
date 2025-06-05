@@ -20,17 +20,17 @@ import type { CourseWithUniversity, Counselor } from "@/types";
 import { Button } from "@/components/ui/button";
 import CounselorCard from "@/components/counselors/counselor-card";
 
-// ✅ Add this favorites fetching hook
-const { data: favorites, isLoading: favoritesLoading } = useQuery({
-  queryKey: ["/api/favorites"],
-  queryFn: async () => {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/favorites`);
-    if (!res.ok) throw new Error("Failed to fetch favorites");
-    return res.json();
-  },
-});
+const Home = () => {
+  const { data: favorites, isLoading: favoritesLoading } = useQuery({
+    queryKey: ["/api/favorites"],
+    queryFn: async () => {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/favorites`);
+      if (!res.ok) throw new Error("Failed to fetch favorites");
+      return res.json();
+    },
+  });
 
-export default function Home() {
+  // ... the rest of your Home component continues here ...
 const { user } = useAuth();
 const [activeTab, setActiveTab] = useState("courses");
 const [selectedCourse, setSelectedCourse] = useState<CourseWithUniversity | null>(null);
