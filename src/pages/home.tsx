@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import Navbar from "@/components/layout/navbar";
@@ -19,6 +19,16 @@ import { apiRequest } from "@/lib/queryClient";
 import type { CourseWithUniversity, Counselor } from "@/types";
 import { Button } from "@/components/ui/button";
 import CounselorCard from "@/components/counselors/counselor-card";
+
+// ✅ Add this favorites fetching hook
+const { data: favorites, isLoading: favoritesLoading } = useQuery({
+  queryKey: ["/api/favorites"],
+  queryFn: async () => {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/favorites`);
+    if (!res.ok) throw new Error("Failed to fetch favorites");
+    return res.json();
+  },
+});
 
 export default function Home() {
 const { user } = useAuth();
