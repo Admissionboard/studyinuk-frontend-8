@@ -214,57 +214,30 @@ structuredData={currentSEO.structuredData}
   </div>
 )}
 
-    {activeTab === "favorites" && (
-      <div className="p-4 md:p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6 md:hidden">Favorite Courses</h2>
- {favorites ? (
-  <>
-    {/* Show favorites */}
-    {/* Replace this with your favorite list component */}
-    <div>Favorites will be shown here</div>
-  </>
+{favorites ? (
+  favorites.length > 0 ? (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {favorites.map((favorite) => (
+        <CourseCard
+          key={favorite.course.id}
+          course={favorite.course}
+          onViewDetails={setSelectedCourse}
+        />
+      ))}
+    </div>
+  ) : (
+    <div className="text-center py-12">
+      <div className="text-gray-400 text-4xl mb-4">🌟</div>
+      <h3 className="text-lg font-medium text-gray-500 mb-2">No favorites yet</h3>
+      <p className="text-gray-400">Tap the ❤️ icon on a course to add it to your favorites</p>
+    </div>
+  )
 ) : (
-  <div>Loading...</div>
+  <div className="flex flex-col items-center justify-center min-h-[300px] p-6">
+    <div className="w-12 h-12 border-4 border-blue-500 border-dashed rounded-full animate-spin-slow mb-4"></div>
+    <p className="text-lg font-semibold text-gray-800">Loading Favorites...</p>
+  </div>
 )}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-200 animate-pulse">
-                <div className="w-full h-48 bg-gray-200"></div>
-                <div className="p-5 space-y-3">
-                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : favorites.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {favorites.map((favorite) => (
-              <CourseCard key={favorite.course.id} course={favorite.course} onViewDetails={setSelectedCourse} isFavorite={true} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-16 bg-gray-50 rounded-xl border border-gray-200">
-            <div className="w-16 h-16 mx-auto mb-6 bg-blue-100 rounded-full flex items-center justify-center">
-              <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-3">No Favorite Courses</h3>
-            <p className="text-gray-600 mb-6 max-w-md mx-auto">
-              Browse our course catalog and save courses you're interested in to create your personalized favorites list.
-            </p>
-            <button
-              onClick={() => setActiveTab("courses")}
-              className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
-            >
-              Browse Courses
-            </button>
-          </div>
-        )}
-      </div>
-    )}
-
     {activeTab === "counselors" && (
       <div className="p-4 md:p-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-6 md:hidden">Education Counsellors</h2>
