@@ -217,7 +217,11 @@ structuredData={currentSEO.structuredData}
     {activeTab === "favorites" && (
       <div className="p-4 md:p-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-6 md:hidden">Favorite Courses</h2>
-        {favoritesLoading ? (
+        {favorites ? (
+  // Show favorites
+) : (
+  <div>Loading...</div>
+)}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(3)].map((_, i) => (
               <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-200 animate-pulse">
