@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Play } from "@/lib/icons";
 import type { Tutorial } from "@/types";
-import { useEffect } from "react";
 
 export default function TutorialsSection() {
   const { data: tutorials = [], isLoading } = useQuery<Tutorial[]>({
@@ -14,13 +14,43 @@ export default function TutorialsSection() {
     window.open(url, "_blank");
   };
 
-  // Group tutorials by category
   const groupedTutorials = tutorials.reduce<Record<string, Tutorial[]>>((acc, tutorial) => {
     const category = tutorial.category || "Other";
     if (!acc[category]) acc[category] = [];
     acc[category].push(tutorial);
     return acc;
   }, {});
+
+  // 🌀 Auto-scroll effect for desktop
+  const scrollRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  useEffect(() => {
+    const intervals: NodeJS.Timeout[] = [];
+
+    Object.entries(scrollRefs.current).forEach(([category, container]) => {
+      if (!container || window.innerWidth < 768) return; // Only auto-scroll on desktop
+
+      let scrollDirection: "right" | "left" = "right";
+
+      const interval = setInterval(() => {
+        if (!container) return;
+
+        const maxScroll = container.scrollWidth - container.clientWidth;
+
+        if (scrollDirection === "right") {
+          container.scrollLeft += 1;
+          if (container.scrollLeft >= maxScroll) scrollDirection = "left";
+        } else {
+          container.scrollLeft -= 1;
+          if (container.scrollLeft <= 0) scrollDirection = "right";
+        }
+      }, 30);
+
+      intervals.push(interval);
+    });
+
+    return () => intervals.forEach(clearInterval);
+  }, [tutorials]);
 
   if (isLoading) {
     return (
@@ -57,12 +87,17 @@ export default function TutorialsSection() {
             <h3 className="text-lg font-semibold text-gray-800 mb-2">{category}</h3>
             <p className="text-sm text-gray-400 mb-2 block md:hidden">👉 Swipe to see more</p>
 
-            <div className="relative overflow-hidden">
-              <div className="scroll-wrapper flex overflow-x-auto space-x-4 pb-2 -mb-2">
+            <div
+              ref={(el) => (scrollRefs.current[category] = el)}
+              className="overflow-x-auto"
+              onMouseEnter={() => clearInterval()}
+              onMouseLeave={() => {}} // auto-scroll resumes from useEffect
+            >
+              <div className="flex space-x-4 pr-6">
                 {group.map((tutorial) => (
                   <div
                     key={tutorial.id}
-                    className="min-w-[280px] max-w-[280px] border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow flex-shrink-0 bg-white"
+                    className="min-w-[260px] max-w-[260px] border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow flex-shrink-0 bg-white"
                   >
                     <img
                       src={
@@ -88,7 +123,6 @@ export default function TutorialsSection() {
                   </div>
                 ))}
               </div>
-              <div className="pointer-events-none absolute top-0 right-0 w-12 h-full bg-gradient-to-l from-white to-transparent" />
             </div>
           </div>
         ))}
