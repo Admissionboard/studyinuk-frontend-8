@@ -37,14 +37,15 @@ export default function CourseFilters({
 
   useEffect(() => {
     const fetchFilters = async () => {
-      const [facRes, levelRes, ieltsRes] = await Promise.all([
-        fetch("/api/filters/faculties").then((res) => res.json()),
-        fetch("/api/filters/levels").then((res) => res.json()),
-        fetch("/api/filters/ielts-scores").then((res) => res.json()),
-      ]);
-      setFaculties(["All Faculties", ...facRes]);
-      setLevels(["All Levels", ...levelRes]);
-      setIeltsScores(["All IELTS Scores", ...ieltsRes]);
+      try {
+        const res = await fetch("/api/courses/filters");
+        const data = await res.json();
+        setFaculties(data.faculties || []);
+        setLevels(data.levels || []);
+        setIeltsScores(data.ieltsScores || []);
+      } catch (err) {
+        console.error("Error fetching filters:", err);
+      }
     };
     fetchFilters();
   }, []);
