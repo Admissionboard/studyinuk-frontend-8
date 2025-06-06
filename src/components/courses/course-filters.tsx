@@ -35,20 +35,20 @@ export default function CourseFilters({
   const [levels, setLevels] = useState<string[]>([]);
   const [ieltsScores, setIeltsScores] = useState<string[]>([]);
 
-  useEffect(() => {
-    const fetchFilters = async () => {
-      try {
-        const res = await fetch("/api/courses/filters");
-        const data = await res.json();
-        setFaculties(data.faculties || []);
-        setLevels(data.levels || []);
-        setIeltsScores(data.ieltsScores || []);
-      } catch (err) {
-        console.error("Error fetching filters:", err);
-      }
-    };
-    fetchFilters();
-  }, []);
+ useEffect(() => {
+  const fetchFilters = async () => {
+    try {
+      const res = await fetch("/api/courses/filters");
+      const data = await res.json();
+      setFaculties(data.faculties);
+      setLevels(data.levels);
+      setIeltsScores(data.ieltsScores);
+    } catch (error) {
+      console.error("Error fetching filters:", error);
+    }
+  };
+  fetchFilters();
+}, []);
 
   return (
     <div className="mb-6">
