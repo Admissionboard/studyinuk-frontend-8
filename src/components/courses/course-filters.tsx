@@ -35,10 +35,10 @@ export default function CourseFilters({
   const [levels, setLevels] = useState<string[]>([]);
   const [ieltsScores, setIeltsScores] = useState<string[]>([]);
 
- useEffect(() => {
+useEffect(() => {
   const fetchFilters = async () => {
     try {
-      const res = await fetch("/api/courses/filters");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/courses/filters`);
       const data = await res.json();
       setFaculties(data.faculties);
       setLevels(data.levels);
