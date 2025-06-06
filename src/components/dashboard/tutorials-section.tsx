@@ -1,14 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Play } from "@/lib/icons";
 import type { Tutorial } from "@/types";
-import { Fragment } from "react";
+import { useEffect } from "react";
 
 export default function TutorialsSection() {
   const { data: tutorials = [], isLoading } = useQuery<Tutorial[]>({
@@ -19,15 +14,13 @@ export default function TutorialsSection() {
     window.open(url, "_blank");
   };
 
-  const groupedTutorials = tutorials.reduce<Record<string, Tutorial[]>>(
-    (acc, tutorial) => {
-      const group = tutorial.category || "Other";
-      if (!acc[group]) acc[group] = [];
-      acc[group].push(tutorial);
-      return acc;
-    },
-    {}
-  );
+  // Group tutorials by category
+  const groupedTutorials = tutorials.reduce<Record<string, Tutorial[]>>((acc, tutorial) => {
+    const category = tutorial.category || "Other";
+    if (!acc[category]) acc[category] = [];
+    acc[category].push(tutorial);
+    return acc;
+  }, {});
 
   if (isLoading) {
     return (
@@ -38,10 +31,7 @@ export default function TutorialsSection() {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[...Array(4)].map((_, i) => (
-              <div
-                key={i}
-                className="border border-gray-200 rounded-lg overflow-hidden animate-pulse"
-              >
+              <div key={i} className="border border-gray-200 rounded-lg overflow-hidden animate-pulse">
                 <div className="w-full h-32 bg-gray-200"></div>
                 <div className="p-4 space-y-2">
                   <div className="h-4 bg-gray-200 rounded w-3/4"></div>
@@ -63,52 +53,45 @@ export default function TutorialsSection() {
       </CardHeader>
       <CardContent>
         {Object.entries(groupedTutorials).map(([category, group]) => (
-          <Fragment key={category}>
-            <h3 className="text-lg font-semibold text-gray-800 mb-2 mt-4">
-              {category}
-            </h3>
-            <div className="flex overflow-x-auto space-x-4 pb-2 -mb-2">
-              {group.map((tutorial) => (
-                <div
-                  key={tutorial.id}
-                  className="min-w-[280px] border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow flex-shrink-0"
-                >
-                  <img
-                    src={
-                      tutorial.thumbnailUrl ||
-                      "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=225"
-                    }
-                    alt={tutorial.title}
-                    className="w-full h-32 object-cover"
-                  />
-                  <div className="p-4">
-                    <h4 className="font-medium text-gray-900 mb-2">
-                      {tutorial.title}
-                    </h4>
-                    <p className="text-sm text-gray-500 mb-3 line-clamp-2">
-                      {tutorial.description}
-                    </p>
-                    <Button
-                      size="sm"
-                      onClick={() => openYouTubeVideo(tutorial.youtubeUrl)}
-                      className="text-primary hover:text-blue-700 p-0 h-auto bg-transparent hover:bg-transparent"
-                      variant="ghost"
-                    >
-                      <Play className="mr-2 h-4 w-4" />
-                      Watch Video
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Fragment>
-        ))}
+          <div key={category} className="mb-8">
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">{category}</h3>
+            <p className="text-sm text-gray-400 mb-2 block md:hidden">👉 Swipe to see more</p>
 
-        {tutorials.length === 0 && (
-          <p className="text-gray-500 text-sm">
-            No tutorial videos available yet.
-          </p>
-        )}
+            <div className="relative overflow-hidden">
+              <div className="scroll-wrapper flex overflow-x-auto space-x-4 pb-2 -mb-2">
+                {group.map((tutorial) => (
+                  <div
+                    key={tutorial.id}
+                    className="min-w-[280px] max-w-[280px] border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow flex-shrink-0 bg-white"
+                  >
+                    <img
+                      src={
+                        tutorial.thumbnailUrl ||
+                        "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=225"
+                      }
+                      alt={tutorial.title}
+                      className="w-full h-32 object-cover"
+                    />
+                    <div className="p-4">
+                      <h4 className="font-medium text-gray-900 mb-2">{tutorial.title}</h4>
+                      <p className="text-sm text-gray-500 mb-3 line-clamp-2">{tutorial.description}</p>
+                      <Button
+                        size="sm"
+                        onClick={() => openYouTubeVideo(tutorial.youtubeUrl)}
+                        className="text-primary hover:text-blue-700 p-0 h-auto bg-transparent hover:bg-transparent"
+                        variant="ghost"
+                      >
+                        <Play className="mr-2 h-4 w-4" />
+                        Watch Video
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="pointer-events-none absolute top-0 right-0 w-12 h-full bg-gradient-to-l from-white to-transparent" />
+            </div>
+          </div>
+        ))}
       </CardContent>
     </Card>
   );
