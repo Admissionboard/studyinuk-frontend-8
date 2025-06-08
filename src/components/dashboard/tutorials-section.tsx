@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Play } from "@/lib/icons";
 import type { Tutorial } from "@/types";
@@ -37,75 +37,76 @@ export default function TutorialsSection() {
     );
   }
 
-// 🔀 Group tutorials by category and sort by order
-const grouped = tutorials.reduce((acc, tutorial) => {
-  if (!tutorial.category) return acc;
-  if (!acc[tutorial.category]) acc[tutorial.category] = [];
-  acc[tutorial.category].push(tutorial);
-  return acc;
-}, {} as Record<string, Tutorial[]>);
+  // ✅ Group by category, sort alphabetically
+  const grouped = tutorials.reduce((acc, tutorial) => {
+    if (!tutorial.category) return acc;
+    if (!acc[tutorial.category]) acc[tutorial.category] = [];
+    acc[tutorial.category].push(tutorial);
+    return acc;
+  }, {} as Record<string, Tutorial[]>);
 
-// ✅ Sort each category's videos by 'order'
-Object.values(grouped).forEach((list) =>
-  list.sort((a, b) => (a.order ?? 9999) - (b.order ?? 9999))
-);
+  // ✅ Sort categories alphabetically
+ const sortedCategories = Object.keys(grouped);
 
-// ✅ Sort categories alphabetically (you can change this logic if needed)
-const sortedCategories = Object.keys(grouped).sort((a, b) => a.localeCompare(b));
+  // ✅ Sort videos inside each category by "order" field
+  Object.values(grouped).forEach((videos) => {
+    videos.sort((a, b) => (a.order ?? 9999) - (b.order ?? 9999));
+  });
 
-return (
-  <Card>
-    <CardHeader>
-      <CardTitle>Tutorial Videos</CardTitle>
-    </CardHeader>
-    <CardContent className="space-y-8">
-      {sortedCategories.map((category) => {
-        const videos = grouped[category];
-        return (
-          <div key={category}>
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-lg font-semibold text-gray-800">{category}</h3>
-              <span className="text-xs text-gray-400 block md:hidden">👉 Swipe to see more</span>
-            </div>
-            <div className="-mx-2 overflow-x-auto pb-2">
-              <div className="flex space-x-4 px-2 snap-x snap-mandatory">
-                {videos.map((tutorial) => (
-                  <div
-                    key={tutorial.id}
-                    className="flex-none w-72 border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow snap-start"
-                  >
-                    <img
-                      src={
-                        tutorial.thumbnailUrl ||
-                        "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=225"
-                      }
-                      alt={tutorial.title}
-                      className="w-full h-32 object-cover"
-                    />
-                    <div className="p-4">
-                      <h4 className="font-medium text-gray-900 mb-2">{tutorial.title}</h4>
-                      <p className="text-sm text-gray-500 mb-3 line-clamp-2">{tutorial.description}</p>
-                      <Button
-                        size="sm"
-                        onClick={() => openYouTubeVideo(tutorial.youtubeUrl)}
-                        className="text-primary hover:text-blue-700 p-0 h-auto bg-transparent hover:bg-transparent"
-                        variant="ghost"
-                      >
-                        <Play className="mr-2 h-4 w-4" />
-                        Watch Video
-                      </Button>
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Tutorial Videos</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-8">
+        {sortedCategories.map((category) => {
+          const videos = grouped[category];
+          return (
+            <div key={category}>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-lg font-semibold text-gray-800">{category}</h3>
+                <span className="text-xs text-gray-400 block md:hidden">👉 Swipe to see more</span>
+              </div>
+              <div className="-mx-2 overflow-x-auto pb-2">
+                <div className="flex space-x-4 px-2 snap-x snap-mandatory">
+                  {videos.map((tutorial) => (
+                    <div
+                      key={tutorial.id}
+                      className="flex-none w-72 border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow snap-start"
+                    >
+                      <img
+                        src={
+                          tutorial.thumbnailUrl ||
+                          "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=225"
+                        }
+                        alt={tutorial.title}
+                        className="w-full h-32 object-cover"
+                      />
+                      <div className="p-4">
+                        <h4 className="font-medium text-gray-900 mb-2">{tutorial.title}</h4>
+                        <p className="text-sm text-gray-500 mb-3 line-clamp-2">{tutorial.description}</p>
+                        <Button
+                          size="sm"
+                          onClick={() => openYouTubeVideo(tutorial.youtubeUrl)}
+                          className="text-primary hover:text-blue-700 p-0 h-auto bg-transparent hover:bg-transparent"
+                          variant="ghost"
+                        >
+                          <Play className="mr-2 h-4 w-4" />
+                          Watch Video
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
 
-      {tutorials.length === 0 && (
-        <p className="text-gray-500 text-sm">No tutorial videos available yet.</p>
-      )}
-    </CardContent>
-  </Card>
-);
+        {tutorials.length === 0 && (
+          <p className="text-gray-500 text-sm">No tutorial videos available yet.</p>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
