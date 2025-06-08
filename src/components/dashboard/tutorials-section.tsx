@@ -37,26 +37,31 @@ export default function TutorialsSection() {
     );
   }
 
-  // 🔀 Group tutorials by category and sort by order
-  const grouped = tutorials.reduce((acc, tutorial) => {
-    if (!tutorial.category) return acc;
-    if (!acc[tutorial.category]) acc[tutorial.category] = [];
-    acc[tutorial.category].push(tutorial);
-    return acc;
-  }, {} as Record<string, Tutorial[]>);
+// 🔀 Group tutorials by category and sort by order
+const grouped = tutorials.reduce((acc, tutorial) => {
+  if (!tutorial.category) return acc;
+  if (!acc[tutorial.category]) acc[tutorial.category] = [];
+  acc[tutorial.category].push(tutorial);
+  return acc;
+}, {} as Record<string, Tutorial[]>);
 
-  // Sort each category by 'order'
-  Object.values(grouped).forEach((list) =>
-    list.sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-  );
+// ✅ Sort each category's videos by 'order'
+Object.values(grouped).forEach((list) =>
+  list.sort((a, b) => (a.order ?? 9999) - (b.order ?? 9999))
+);
 
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Tutorial Videos</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-8">
-        {Object.entries(grouped).map(([category, videos]) => (
+// ✅ Sort categories alphabetically (you can change this logic if needed)
+const sortedCategories = Object.keys(grouped).sort((a, b) => a.localeCompare(b));
+
+return (
+  <Card>
+    <CardHeader>
+      <CardTitle>Tutorial Videos</CardTitle>
+    </CardHeader>
+    <CardContent className="space-y-8">
+      {sortedCategories.map((category) => {
+        const videos = grouped[category];
+        return (
           <div key={category}>
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-lg font-semibold text-gray-800">{category}</h3>
@@ -95,12 +100,12 @@ export default function TutorialsSection() {
               </div>
             </div>
           </div>
-        ))}
+        );
+      })}
 
-        {tutorials.length === 0 && (
-          <p className="text-gray-500 text-sm">No tutorial videos available yet.</p>
-        )}
-      </CardContent>
-    </Card>
-  );
-}
+      {tutorials.length === 0 && (
+        <p className="text-gray-500 text-sm">No tutorial videos available yet.</p>
+      )}
+    </CardContent>
+  </Card>
+);
