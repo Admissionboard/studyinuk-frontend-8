@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useRef } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Play } from "@/lib/icons";
 import type { Tutorial } from "@/types";
@@ -13,44 +12,6 @@ export default function TutorialsSection() {
   const openYouTubeVideo = (url: string) => {
     window.open(url, "_blank");
   };
-
-  const groupedTutorials = tutorials.reduce<Record<string, Tutorial[]>>((acc, tutorial) => {
-    const category = tutorial.category || "Other";
-    if (!acc[category]) acc[category] = [];
-    acc[category].push(tutorial);
-    return acc;
-  }, {});
-
-  // 🌀 Auto-scroll effect for desktop
-  const scrollRefs = useRef<Record<string, HTMLDivElement | null>>({});
-
-  useEffect(() => {
-    const intervals: NodeJS.Timeout[] = [];
-
-    Object.entries(scrollRefs.current).forEach(([category, container]) => {
-      if (!container || window.innerWidth < 768) return; // Only auto-scroll on desktop
-
-      let scrollDirection: "right" | "left" = "right";
-
-      const interval = setInterval(() => {
-        if (!container) return;
-
-        const maxScroll = container.scrollWidth - container.clientWidth;
-
-        if (scrollDirection === "right") {
-          container.scrollLeft += 1;
-          if (container.scrollLeft >= maxScroll) scrollDirection = "left";
-        } else {
-          container.scrollLeft -= 1;
-          if (container.scrollLeft <= 0) scrollDirection = "right";
-        }
-      }, 30);
-
-      intervals.push(interval);
-    });
-
-    return () => intervals.forEach(clearInterval);
-  }, [tutorials]);
 
   if (isLoading) {
     return (
@@ -76,28 +37,37 @@ export default function TutorialsSection() {
     );
   }
 
+  // 🔀 Group tutorials by category and sort by order
+  const grouped = tutorials.reduce((acc, tutorial) => {
+    if (!tutorial.category) return acc;
+    if (!acc[tutorial.category]) acc[tutorial.category] = [];
+    acc[tutorial.category].push(tutorial);
+    return acc;
+  }, {} as Record<string, Tutorial[]>);
+
+  // Sort each category by 'order'
+  Object.values(grouped).forEach((list) =>
+    list.sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+  );
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Tutorial Videos</CardTitle>
       </CardHeader>
-      <CardContent>
-        {Object.entries(groupedTutorials).map(([category, group]) => (
-          <div key={category} className="mb-8">
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">{category}</h3>
-            <p className="text-sm text-gray-400 mb-2 block md:hidden">👉 Swipe to see more</p>
-
-            <div
-              ref={(el) => (scrollRefs.current[category] = el)}
-              className="overflow-x-auto"
-              onMouseEnter={() => clearInterval()}
-              onMouseLeave={() => {}} // auto-scroll resumes from useEffect
-            >
-              <div className="flex space-x-4 pr-6">
-                {group.map((tutorial) => (
+      <CardContent className="space-y-8">
+        {Object.entries(grouped).map(([category, videos]) => (
+          <div key={category}>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-lg font-semibold text-gray-800">{category}</h3>
+              <span className="text-xs text-gray-400 block md:hidden">👉 Swipe to see more</span>
+            </div>
+            <div className="-mx-2 overflow-x-auto pb-2">
+              <div className="flex space-x-4 px-2 snap-x snap-mandatory">
+                {videos.map((tutorial) => (
                   <div
                     key={tutorial.id}
-                    className="min-w-[260px] max-w-[260px] border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow flex-shrink-0 bg-white"
+                    className="flex-none w-72 border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow snap-start"
                   >
                     <img
                       src={
@@ -126,6 +96,10 @@ export default function TutorialsSection() {
             </div>
           </div>
         ))}
+
+        {tutorials.length === 0 && (
+          <p className="text-gray-500 text-sm">No tutorial videos available yet.</p>
+        )}
       </CardContent>
     </Card>
   );
