@@ -40,21 +40,24 @@ export default function TutorialsSection() {
     );
   }
 
-  // ✅ Group tutorials by category
-  const grouped = tutorials.reduce((acc, tutorial) => {
-    if (!tutorial.category) return acc;
-    if (!acc[tutorial.category]) acc[tutorial.category] = [];
-    acc[tutorial.category].push(tutorial);
-    return acc;
-  }, {} as Record<string, Tutorial[]>);
+  // ✅ Group tutorials by category and preserve order of appearance
+  const groupedMap = new Map<string, Tutorial[]>();
 
-  // ✅ Preserve original category order
-  const sortedCategories = Object.keys(grouped);
+  tutorials.forEach((tutorial) => {
+    if (!tutorial.category) return;
+    if (!groupedMap.has(tutorial.category)) {
+      groupedMap.set(tutorial.category, []);
+    }
+    groupedMap.get(tutorial.category)!.push(tutorial);
+  });
 
   // ✅ Sort videos inside each category by 'order'
-  Object.values(grouped).forEach((videos) =>
-    videos.sort((a, b) => (a.order ?? 9999) - (b.order ?? 9999))
-  );
+  groupedMap.forEach((list) => {
+    list.sort((a, b) => (a.order ?? 9999) - (b.order ?? 9999));
+  });
+
+  // ✅ Convert Map to array to render
+  const groupedArray = Array.from(groupedMap.entries());
 
   return (
     <Card>
@@ -62,7 +65,7 @@ export default function TutorialsSection() {
         <CardTitle>Tutorial Videos</CardTitle>
       </CardHeader>
       <CardContent className="space-y-8">
-        {sortedCategories.map((category) => (
+        {groupedArray.map(([category, videos]) => (
           <div key={category}>
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-lg font-semibold text-gray-800">{category}</h3>
@@ -72,7 +75,7 @@ export default function TutorialsSection() {
             </div>
             <div className="-mx-2 overflow-x-auto pb-2">
               <div className="flex space-x-4 px-2 snap-x snap-mandatory">
-                {grouped[category].map((tutorial) => (
+                {videos.map((tutorial) => (
                   <div
                     key={tutorial.id}
                     className="flex-none w-72 border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow snap-start"
@@ -110,9 +113,7 @@ export default function TutorialsSection() {
         ))}
 
         {tutorials.length === 0 && (
-          <p className="text-gray-500 text-sm">
-            No tutorial videos available yet.
-          </p>
+          <p className="text-gray-500 text-sm">No tutorial videos available yet.</p>
         )}
       </CardContent>
     </Card>
