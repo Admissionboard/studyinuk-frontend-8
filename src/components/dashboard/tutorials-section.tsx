@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+  import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Play } from "@/lib/icons";
@@ -22,7 +22,10 @@ export default function TutorialsSection() {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="border border-gray-200 rounded-lg overflow-hidden animate-pulse">
+              <div
+                key={i}
+                className="border border-gray-200 rounded-lg overflow-hidden animate-pulse"
+              >
                 <div className="w-full h-32 bg-gray-200"></div>
                 <div className="p-4 space-y-2">
                   <div className="h-4 bg-gray-200 rounded w-3/4"></div>
@@ -37,15 +40,15 @@ export default function TutorialsSection() {
     );
   }
 
-  // ✅ Step 1: Group tutorials by category with order
-  const groupedMap = new Map<string, { order: number; videos: Tutorial[] }>();
+  // ✅ Group tutorials by category and include category order
+  const groupedMap = new Map<string, { categoryOrder: number; videos: Tutorial[] }>();
 
   tutorials.forEach((tutorial) => {
     if (!tutorial.category) return;
 
     if (!groupedMap.has(tutorial.category)) {
       groupedMap.set(tutorial.category, {
-        order: tutorial.category_order ?? 999,
+        categoryOrder: tutorial.category_order ?? 999,
         videos: [],
       });
     }
@@ -53,14 +56,14 @@ export default function TutorialsSection() {
     groupedMap.get(tutorial.category)!.videos.push(tutorial);
   });
 
-  // ✅ Step 2: Sort videos within each category
-  for (const { videos } of groupedMap.values()) {
-    videos.sort((a, b) => (a.order ?? 9999) - (b.order ?? 9999));
+  // ✅ Sort videos inside each category by `order`
+  for (const group of groupedMap.values()) {
+    group.videos.sort((a, b) => (a.order ?? 9999) - (b.order ?? 9999));
   }
 
-  // ✅ Step 3: Sort categories by category_order
-  const sortedCategories = [...groupedMap.entries()].sort(
-    (a, b) => a[1].order - b[1].order
+  // ✅ Sort categories by category_order
+  const groupedArray = [...groupedMap.entries()].sort(
+    (a, b) => a[1].categoryOrder - b[1].categoryOrder
   );
 
   return (
@@ -69,11 +72,13 @@ export default function TutorialsSection() {
         <CardTitle>Tutorial Videos</CardTitle>
       </CardHeader>
       <CardContent className="space-y-8">
-        {sortedCategories.map(([category, data]) => (
+        {groupedArray.map(([category, data]) => (
           <div key={category}>
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-lg font-semibold text-gray-800">{category}</h3>
-              <span className="text-xs text-gray-400 block md:hidden">👉 Swipe to see more</span>
+              <span className="text-xs text-gray-400 block md:hidden">
+                👉 Swipe to see more
+              </span>
             </div>
             <div className="-mx-2 overflow-x-auto pb-2">
               <div className="flex space-x-4 px-2 snap-x snap-mandatory">
@@ -91,7 +96,9 @@ export default function TutorialsSection() {
                       className="w-full h-32 object-cover"
                     />
                     <div className="p-4">
-                      <h4 className="font-medium text-gray-900 mb-2">{tutorial.title}</h4>
+                      <h4 className="font-medium text-gray-900 mb-2">
+                        {tutorial.title}
+                      </h4>
                       <p className="text-sm text-gray-500 mb-3 line-clamp-2">
                         {tutorial.description}
                       </p>
@@ -113,7 +120,9 @@ export default function TutorialsSection() {
         ))}
 
         {tutorials.length === 0 && (
-          <p className="text-gray-500 text-sm">No tutorial videos available yet.</p>
+          <p className="text-gray-500 text-sm">
+            No tutorial videos available yet.
+          </p>
         )}
       </CardContent>
     </Card>
