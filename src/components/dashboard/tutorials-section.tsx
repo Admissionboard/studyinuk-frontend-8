@@ -40,15 +40,15 @@ export default function TutorialsSection() {
     );
   }
 
-  // ✅ Group tutorials by category and keep category order
-  const groupedMap = new Map<string, { order: number; videos: Tutorial[] }>();
+  // ✅ Group tutorials by category and retain category_order
+  const groupedMap = new Map<string, { category_order: number; videos: Tutorial[] }>();
 
   tutorials.forEach((tutorial) => {
     if (!tutorial.category) return;
 
     if (!groupedMap.has(tutorial.category)) {
       groupedMap.set(tutorial.category, {
-        order: tutorial.category_order ?? 999,
+        category_order: tutorial.category_order ?? 999,
         videos: [],
       });
     }
@@ -61,9 +61,9 @@ export default function TutorialsSection() {
     videos.sort((a, b) => (a.order ?? 9999) - (b.order ?? 9999));
   }
 
-  // ✅ Convert map to sorted array by category_order
+  // ✅ Sort the categories by category_order
   const sortedCategories = [...groupedMap.entries()].sort(
-    (a, b) => a[1].order - b[1].order
+    (a, b) => a[1].category_order - b[1].category_order
   );
 
   return (
@@ -76,9 +76,7 @@ export default function TutorialsSection() {
           <div key={category}>
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-lg font-semibold text-gray-800">{category}</h3>
-              <span className="text-xs text-gray-400 block md:hidden">
-                👉 Swipe to see more
-              </span>
+              <span className="text-xs text-gray-400 block md:hidden">👉 Swipe to see more</span>
             </div>
             <div className="-mx-2 overflow-x-auto pb-2">
               <div className="flex space-x-4 px-2 snap-x snap-mandatory">
