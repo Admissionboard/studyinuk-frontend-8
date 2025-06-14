@@ -122,6 +122,7 @@ const sortedCategories = [...groupedMap.entries()].sort(
       ) : (
         <p className="text-gray-500 text-sm">No tutorial videos available yet.</p>
       )}
-    </CardContent>
+        </CardContent>
   </Card>
 );
+}
