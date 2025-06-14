@@ -40,43 +40,46 @@ export default function TutorialsSection() {
     );
   }
 
-  // ✅ Group tutorials by category and retain category_order
-  const groupedMap = new Map<string, { category_order: number; videos: Tutorial[] }>();
+  // ✅ Step 1: Group tutorials by category
+const groupedMap = new Map<string, { order: number; videos: Tutorial[] }>();
 
-  tutorials.forEach((tutorial) => {
-    if (!tutorial.category) return;
+tutorials.forEach((tutorial) => {
+  if (!tutorial.category) return;
 
-    if (!groupedMap.has(tutorial.category)) {
-      groupedMap.set(tutorial.category, {
-        category_order: tutorial.category_order ?? 999,
-        videos: [],
-      });
-    }
-
-    groupedMap.get(tutorial.category)!.videos.push(tutorial);
-  });
-
-  // ✅ Sort videos inside each category
-  for (const { videos } of groupedMap.values()) {
-    videos.sort((a, b) => (a.order ?? 9999) - (b.order ?? 9999));
+  if (!groupedMap.has(tutorial.category)) {
+    groupedMap.set(tutorial.category, {
+      order: tutorial.category_order ?? 999,
+      videos: [],
+    });
   }
 
-  // ✅ Sort the categories by category_order
-  const sortedCategories = [...groupedMap.entries()].sort(
-    (a, b) => a[1].category_order - b[1].category_order
-  );
+  groupedMap.get(tutorial.category)!.videos.push(tutorial);
+});
 
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Tutorial Videos</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-8">
-        {sortedCategories.map(([category, data]) => (
+// ✅ Step 2: Sort videos inside each category
+for (const { videos } of groupedMap.values()) {
+  videos.sort((a, b) => (a.order ?? 9999) - (b.order ?? 9999));
+}
+
+// ✅ Step 3: Sort categories by category_order
+const sortedCategories = [...groupedMap.entries()].sort(
+  (a, b) => a[1].order - b[1].order
+);
+
+ return (
+  <Card>
+    <CardHeader>
+      <CardTitle>Tutorial Videos</CardTitle>
+    </CardHeader>
+    <CardContent className="space-y-8">
+      {sortedCategories.length > 0 ? (
+        sortedCategories.map(([category, data]) => (
           <div key={category}>
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-lg font-semibold text-gray-800">{category}</h3>
-              <span className="text-xs text-gray-400 block md:hidden">👉 Swipe to see more</span>
+              <span className="text-xs text-gray-400 block md:hidden">
+                👉 Swipe to see more
+              </span>
             </div>
             <div className="-mx-2 overflow-x-auto pb-2">
               <div className="flex space-x-4 px-2 snap-x snap-mandatory">
@@ -94,7 +97,9 @@ export default function TutorialsSection() {
                       className="w-full h-32 object-cover"
                     />
                     <div className="p-4">
-                      <h4 className="font-medium text-gray-900 mb-2">{tutorial.title}</h4>
+                      <h4 className="font-medium text-gray-900 mb-2">
+                        {tutorial.title}
+                      </h4>
                       <p className="text-sm text-gray-500 mb-3 line-clamp-2">
                         {tutorial.description}
                       </p>
@@ -113,12 +118,10 @@ export default function TutorialsSection() {
               </div>
             </div>
           </div>
-        ))}
-
-        {tutorials.length === 0 && (
-          <p className="text-gray-500 text-sm">No tutorial videos available yet.</p>
-        )}
-      </CardContent>
-    </Card>
-  );
-}
+        ))
+      ) : (
+        <p className="text-gray-500 text-sm">No tutorial videos available yet.</p>
+      )}
+    </CardContent>
+  </Card>
+);
