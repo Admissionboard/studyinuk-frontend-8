@@ -170,7 +170,7 @@ const Home = () => {
                 <div className="w-12 h-12 border-4 border-blue-500 border-dashed rounded-full animate-spin-slow mb-4"></div>
                 <p className="text-lg font-semibold text-gray-800">Loading Courses...</p>
                 <p className="text-sm text-gray-500 mt-1">
-                  Please wait <span id="countdown">30</span> seconds while we fetch over 1350 course records.
+                  Please wait <span id="countdown">30</span> seconds while we fetch over 2000 course records.
                 </p>
                 <script dangerouslySetInnerHTML={{
                   __html: `
