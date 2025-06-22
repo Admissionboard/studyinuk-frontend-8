@@ -64,14 +64,18 @@ const Home = () => {
   });
 
   const { data: favorites, isLoading: favoritesLoading } = useQuery({
-    queryKey: ["/api/favorites"],
-    queryFn: async () => {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/favorites`);
-      if (!res.ok) throw new Error("Failed to fetch favorites");
-      return res.json();
-    },
-    enabled: activeTab === "favorites",
-  });
+  queryKey: ["/api/favorites"],
+  queryFn: async () => {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/favorites`, {
+      headers: {
+        "x-user-id": user?.id || "",
+      },
+    });
+    if (!res.ok) throw new Error("Failed to fetch favorites");
+    return res.json();
+  },
+  enabled: activeTab === "favorites" && !!user?.id,
+});
 
   const { data: counselors = [], isLoading: counselorsLoading } = useQuery<Counselor[]>({
     queryKey: ["/api/counselors"],

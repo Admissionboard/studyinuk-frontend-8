@@ -31,32 +31,42 @@ export default function CourseCard({ course, onViewDetails, isFavorite: initialF
   const isFavorited = Array.isArray(allFavorites) ? 
     allFavorites.some((fav: any) => fav.course.id === course.id) : false;
 
-  // Toggle favorite mutation
-  const toggleFavoriteMutation = useMutation({
-    mutationFn: async () => {
-  if (isFavorited) {
-    return apiRequest(`/api/favorites/${course.id}`, {
-      method: "DELETE",
-    });
-  } else {
-    return apiRequest(`/api/favorites`, {
-      method: "POST",
-      body: JSON.stringify({ courseId: course.id }),
-    });
-  }
-},
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/favorites"] });
-      queryClient.refetchQueries({ queryKey: ["/api/favorites"] });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error?.message || "Failed to update favorites.",
-        variant: "destructive",
+ // Toggle favorite mutation (updated to send x-user-id header)
+const toggleFavoriteMutation = useMutation({
+  mutationFn: async () => {
+    const headers: HeadersInit = {
+      "Content-Type": "application/json",
+    };
+
+    if (user?.id) {
+      headers["x-user-id"] = user.id;
+    }
+
+    if (isFavorited) {
+      return apiRequest(`/api/favorites/${course.id}`, {
+        method: "DELETE",
+        headers,
       });
-    },
-  });
+    } else {
+      return apiRequest(`/api/favorites`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ courseId: course.id }),
+      });
+    }
+  },
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["/api/favorites"] });
+    queryClient.refetchQueries({ queryKey: ["/api/favorites"] });
+  },
+  onError: (error: any) => {
+    toast({
+      title: "Error",
+      description: error?.message || "Failed to update favorites.",
+      variant: "destructive",
+    });
+  },
+});
 
   const toggleFavorite = () => {
     toggleFavoriteMutation.mutate();
