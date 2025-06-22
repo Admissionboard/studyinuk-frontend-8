@@ -63,20 +63,21 @@ const Home = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  const { data: favorites, isLoading: favoritesLoading } = useQuery({
+ const { data: favorites, isLoading: favoritesLoading } = useQuery({
   queryKey: ["/api/favorites"],
   queryFn: async () => {
     const res = await fetch(`${import.meta.env.VITE_API_URL}/api/favorites`, {
       headers: {
         "Content-Type": "application/json",
-        "x-user-id": user?.id || "",  // ✅ Send user ID from useAuth()
+        "x-user-id": user?.id || "",
       },
     });
 
     if (!res.ok) throw new Error("Failed to fetch favorites");
     return res.json();
   },
-  enabled: activeTab === "favorites",
+  // ✅ Wait until user is available
+  enabled: activeTab === "favorites" && !!user?.id,
 });
 
   const { data: counselors = [], isLoading: counselorsLoading } = useQuery<Counselor[]>({
