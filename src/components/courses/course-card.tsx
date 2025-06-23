@@ -32,7 +32,7 @@ const isFavorited = Array.isArray(allFavorites)
   ? allFavorites.some((fav: any) => fav.course?.id === course.id || fav.courseId === course.id)
   : false;
 
-cconst toggleFavoriteMutation = useMutation({
+const toggleFavoriteMutation = useMutation({
   mutationFn: async () => {
     if (isFavorited) {
       return apiRequest(`/api/favorites/${course.id}`, {
