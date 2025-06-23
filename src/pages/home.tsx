@@ -68,13 +68,13 @@ const { data: favorites, isLoading: favoritesLoading } = useQuery({
   queryFn: async () => {
     const res = await fetch(`${import.meta.env.VITE_API_URL}/api/favorites`, {
       headers: {
-        "x-user-id": user?.id || "",
+        "x-user-id": user?.id || "",  // ✅ send user id to backend
       },
     });
     if (!res.ok) throw new Error("Failed to fetch favorites");
     return res.json();
   },
-  enabled: !!user && activeTab === "favorites",
+  enabled: activeTab === "favorites" && !!user?.id,
 });
 
   const { data: counselors = [], isLoading: counselorsLoading } = useQuery<Counselor[]>({

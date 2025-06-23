@@ -76,7 +76,7 @@ const toggleFavoriteMutation = useMutation({
     }
   },
   onSettled: () => {
-    queryClient.invalidateQueries({ queryKey: ["/api/favorites", user?.id] });
+   queryClient.invalidateQueries({ queryKey: ["/api/favorites", user?.id] });
   },
 });
 
