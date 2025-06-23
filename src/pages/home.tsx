@@ -63,19 +63,18 @@ const Home = () => {
     staleTime: 5 * 60 * 1000,
   });
 
- const { data: favorites, isLoading: favoritesLoading } = useQuery({
-  queryKey: ["/api/favorites", user?.id], // key includes user ID
+const { data: favorites, isLoading: favoritesLoading } = useQuery({
+  queryKey: ["/api/favorites", user?.id],
   queryFn: async () => {
-    if (!user?.id) throw new Error("User not authenticated");
     const res = await fetch(`${import.meta.env.VITE_API_URL}/api/favorites`, {
       headers: {
-        "x-user-id": user.id,
+        "x-user-id": user?.id || "",
       },
     });
     if (!res.ok) throw new Error("Failed to fetch favorites");
     return res.json();
   },
-  enabled: activeTab === "favorites" && !!user?.id,
+  enabled: !!user && activeTab === "favorites",
 });
 
   const { data: counselors = [], isLoading: counselorsLoading } = useQuery<Counselor[]>({
