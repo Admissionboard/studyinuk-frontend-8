@@ -31,40 +31,54 @@ export default function CourseCard({ course, onViewDetails, isFavorite: initialF
   const isFavorited = Array.isArray(allFavorites) ? 
     allFavorites.some((fav: any) => fav.course.id === course.id) : false;
 
- // Toggle favorite mutation (updated to send x-user-id header)
 const toggleFavoriteMutation = useMutation({
   mutationFn: async () => {
-    const headers: HeadersInit = {
-      "Content-Type": "application/json",
-    };
-
-    if (user?.id) {
-      headers["x-user-id"] = user.id;
-    }
-
     if (isFavorited) {
       return apiRequest(`/api/favorites/${course.id}`, {
         method: "DELETE",
-        headers,
+        headers: {
+          "x-user-id": user?.id,
+        },
       });
     } else {
       return apiRequest(`/api/favorites`, {
         method: "POST",
-        headers,
+        headers: {
+          "x-user-id": user?.id,
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ courseId: course.id }),
       });
     }
   },
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ["/api/favorites"] });
-    queryClient.refetchQueries({ queryKey: ["/api/favorites"] });
+
+  // ✅ Optimistic update logic (new)
+  onMutate: async () => {
+    await queryClient.cancelQueries({ queryKey: ["/api/favorites", user?.id] });
+
+    const previousFavorites = queryClient.getQueryData<any[]>(["/api/favorites", user?.id]);
+
+    if (isFavorited) {
+      queryClient.setQueryData(
+        ["/api/favorites", user?.id],
+        previousFavorites?.filter((fav: any) => fav.course.id !== course.id) || []
+      );
+    } else {
+      queryClient.setQueryData(
+        ["/api/favorites", user?.id],
+        [...(previousFavorites || []), { course }]
+      );
+    }
+
+    return { previousFavorites };
   },
-  onError: (error: any) => {
-    toast({
-      title: "Error",
-      description: error?.message || "Failed to update favorites.",
-      variant: "destructive",
-    });
+  onError: (_err, _vars, context) => {
+    if (context?.previousFavorites) {
+      queryClient.setQueryData(["/api/favorites", user?.id], context.previousFavorites);
+    }
+  },
+  onSettled: () => {
+    queryClient.invalidateQueries({ queryKey: ["/api/favorites", user?.id] });
   },
 });
 

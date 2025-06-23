@@ -64,19 +64,17 @@ const Home = () => {
   });
 
  const { data: favorites, isLoading: favoritesLoading } = useQuery({
-  queryKey: ["/api/favorites"],
+  queryKey: ["/api/favorites", user?.id], // key includes user ID
   queryFn: async () => {
+    if (!user?.id) throw new Error("User not authenticated");
     const res = await fetch(`${import.meta.env.VITE_API_URL}/api/favorites`, {
       headers: {
-        "Content-Type": "application/json",
-        "x-user-id": user?.id || "",
+        "x-user-id": user.id,
       },
     });
-
     if (!res.ok) throw new Error("Failed to fetch favorites");
     return res.json();
   },
-  // ✅ Wait until user is available
   enabled: activeTab === "favorites" && !!user?.id,
 });
 
