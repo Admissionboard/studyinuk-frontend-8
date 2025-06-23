@@ -63,12 +63,15 @@ const Home = () => {
     staleTime: 5 * 60 * 1000,
   });
 
+const { user } = useAuth();
+
 const { data: favorites, isLoading: favoritesLoading } = useQuery({
   queryKey: ["/api/favorites", user?.id],
   queryFn: async () => {
     const res = await fetch(`${import.meta.env.VITE_API_URL}/api/favorites`, {
       headers: {
-        "x-user-id": user?.id || "",  // ✅ send user id to backend
+        "Content-Type": "application/json",
+        "x-user-id": user?.id || "", // 🧠 Send user ID in header
       },
     });
     if (!res.ok) throw new Error("Failed to fetch favorites");

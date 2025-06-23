@@ -37,46 +37,28 @@ const toggleFavoriteMutation = useMutation({
     if (isFavorited) {
       return apiRequest(`/api/favorites/${course.id}`, {
         method: "DELETE",
-        headers: {
-          "x-user-id": user?.id,
-        },
-      });
-    } else {
-      return apiRequest(`/api/favorites`, {
-        method: "POST",
-        headers: {
-          "x-user-id": user?.id,
-        },
-        body: JSON.stringify({ courseId: course.id }),
       });
     }
+    return apiRequest(`/api/favorites`, {
+      method: "POST",
+      body: JSON.stringify({ courseId: course.id }),
+    });
   },
   onMutate: async () => {
-    await queryClient.cancelQueries({ queryKey: ["/api/favorites", user?.id] });
-
-    const previousFavorites = queryClient.getQueryData<any[]>(["/api/favorites", user?.id]);
-
+    await queryClient.cancelQueries(["/api/favorites", user?.id]);
+    const previous = queryClient.getQueryData<CourseWithUniversity[]>(["/api/favorites", user?.id]) ?? [];
     if (isFavorited) {
-      queryClient.setQueryData(
-        ["/api/favorites", user?.id],
-        previousFavorites?.filter((fav: any) => fav.course?.id !== course.id && fav.courseId !== course.id)
-      );
+      queryClient.setQueryData(["/api/favorites", user?.id], previous.filter(fav => fav.course.id !== course.id));
     } else {
-      queryClient.setQueryData(
-        ["/api/favorites", user?.id],
-        [...(previousFavorites || []), { courseId: course.id, course }]
-      );
+      queryClient.setQueryData(["/api/favorites", user?.id], [...previous, { course }]);
     }
-
-    return { previousFavorites };
+    return { previous };
   },
-  onError: (_err, _vars, context) => {
-    if (context?.previousFavorites) {
-      queryClient.setQueryData(["/api/favorites", user?.id], context.previousFavorites);
-    }
+  onError: (_err, _vars, ctx) => {
+    if (ctx?.previous) queryClient.setQueryData(["/api/favorites", user?.id], ctx.previous);
   },
   onSettled: () => {
-   queryClient.invalidateQueries({ queryKey: ["/api/favorites", user?.id] });
+    queryClient.invalidateQueries(["/api/favorites", user?.id]);
   },
 });
 

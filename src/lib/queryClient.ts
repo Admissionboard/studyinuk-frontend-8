@@ -1,5 +1,5 @@
 import { QueryClient } from "@tanstack/react-query";
-import { supabase } from "./supabase"; // ✅ Make sure this path is correct
+import { supabase } from "./supabase"; // ✅ Ensure this is correct
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
@@ -10,10 +10,23 @@ async function throwIfResNotOk(res: Response) {
 
 async function getAuthHeaders(): Promise<Record<string, string>> {
   // ✅ Get the current session from Supabase
-  const { data, error } = await supabase.auth.getSession();
+  const { data } = await supabase.auth.getSession();
   const token = data?.session?.access_token;
+  const userId = data?.session?.user?.id;
 
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  if (userId) {
+    headers["x-user-id"] = userId;
+  }
+
+  return headers;
 }
 
 export async function apiRequest(
@@ -21,12 +34,12 @@ export async function apiRequest(
   options: RequestInit = {}
 ): Promise<any> {
   const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
-  const fullUrl = `${apiUrl.replace(/\/+$/, '')}/${url.replace(/^\/+/, '')}`;
+  const fullUrl = `${apiUrl.replace(/\/+$/, "")}/${url.replace(/^\/+/, "")}`;
 
-  // 🚨 Add this check to catch invalid usage
+  // 🚨 Prevent incorrect usage
   if (url.toUpperCase() === "GET") {
     console.error("🚨 Bad API request made to 'GET'. This usually means a query or mutation is calling apiRequest('GET') by mistake.");
-    console.trace(); // 🔍 Shows exactly where the error originated
+    console.trace();
     throw new Error("Invalid API request: 'GET' is not a valid path.");
   }
 
@@ -35,21 +48,20 @@ export async function apiRequest(
   const response = await fetch(fullUrl, {
     ...options,
     headers: {
-      "Content-Type": "application/json",
       ...authHeaders,
-      ...options.headers,
+      ...(options.headers || {}),
     },
   });
 
   await throwIfResNotOk(response);
 
-  if (response.headers.get("content-type")?.includes("application/json")) {
+  const contentType = response.headers.get("content-type");
+  if (contentType?.includes("application/json")) {
     return response.json();
   }
 
   return response.text();
 }
-
 
 type UnauthorizedBehavior = "returnNull" | "throw";
 
@@ -79,7 +91,6 @@ export const getQueryFn = (options: {
     }
   };
 };
-
 
 export const queryClient = new QueryClient({
   defaultOptions: {
