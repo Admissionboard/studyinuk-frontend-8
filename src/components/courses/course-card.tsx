@@ -27,11 +27,12 @@ export default function CourseCard({ course, onViewDetails, isFavorite: initialF
     queryKey: ["/api/favorites"],
   });
 
-  // Check if this course is favorited
-  const isFavorited = Array.isArray(allFavorites) ? 
-    allFavorites.some((fav: any) => fav.course.id === course.id) : false;
+ // Check if this course is favorited
+const isFavorited = Array.isArray(allFavorites)
+  ? allFavorites.some((fav: any) => fav.course?.id === course.id || fav.courseId === course.id)
+  : false;
 
-const toggleFavoriteMutation = useMutation({
+cconst toggleFavoriteMutation = useMutation({
   mutationFn: async () => {
     if (isFavorited) {
       return apiRequest(`/api/favorites/${course.id}`, {
@@ -45,14 +46,11 @@ const toggleFavoriteMutation = useMutation({
         method: "POST",
         headers: {
           "x-user-id": user?.id,
-          "Content-Type": "application/json",
         },
         body: JSON.stringify({ courseId: course.id }),
       });
     }
   },
-
-  // ✅ Optimistic update logic (new)
   onMutate: async () => {
     await queryClient.cancelQueries({ queryKey: ["/api/favorites", user?.id] });
 
@@ -61,12 +59,12 @@ const toggleFavoriteMutation = useMutation({
     if (isFavorited) {
       queryClient.setQueryData(
         ["/api/favorites", user?.id],
-        previousFavorites?.filter((fav: any) => fav.course.id !== course.id) || []
+        previousFavorites?.filter((fav: any) => fav.course?.id !== course.id && fav.courseId !== course.id)
       );
     } else {
       queryClient.setQueryData(
         ["/api/favorites", user?.id],
-        [...(previousFavorites || []), { course }]
+        [...(previousFavorites || []), { courseId: course.id, course }]
       );
     }
 
