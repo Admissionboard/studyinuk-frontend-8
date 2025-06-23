@@ -63,7 +63,6 @@ const Home = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-const { user } = useAuth();
 
 const { data: favorites, isLoading: favoritesLoading } = useQuery({
   queryKey: ["/api/favorites", user?.id],
