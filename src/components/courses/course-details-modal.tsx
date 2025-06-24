@@ -37,7 +37,6 @@ export default function CourseDetailsModal({ course, isOpen, onClose, onNavigate
 return (
   <Dialog open={isOpen} onOpenChange={onClose}>
     <DialogContent
-      aria-describedby="course-details-description"
       className="max-w-2xl max-h-[90vh] overflow-y-auto border-2 border-gray-200 shadow-xl"
     >
       <DialogHeader className="border-b border-gray-200 pb-4">
