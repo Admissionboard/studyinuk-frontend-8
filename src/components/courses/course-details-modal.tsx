@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -36,20 +36,19 @@ export default function CourseDetailsModal({ course, isOpen, onClose, onNavigate
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent
-  aria-describedby="course-details-description"
-  className="max-w-2xl max-h-[90vh] overflow-y-auto border-2 border-gray-200 shadow-xl"
->
-  <p id="course-details-description" className="sr-only">
-    Detailed course information including university, location, IELTS score, tuition fees, and duration.
-  </p>
-
-  {/* the rest of your modal content */}
-        <DialogHeader className="border-b border-gray-200 pb-4">
-          <DialogTitle className="text-2xl font-bold text-gray-900">
-            {course.name}
-          </DialogTitle>
-        </DialogHeader>
+  <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto border-2 border-gray-200 shadow-xl">
+    <DialogHeader className="border-b border-gray-200 pb-4">
+      <DialogTitle className="text-2xl font-bold text-gray-900">
+        {course.name}
+      </DialogTitle>
+      <DialogDescription>
+        Detailed course information including university, location, IELTS score, tuition fees, and duration.
+      </DialogDescription>
+    </DialogHeader>
+    
+    {/* the rest of your modal content */}
+  </DialogContent>
+</Dialog>
         
         <div className="space-y-6 pt-4">
           <div className="bg-slate-50 p-4 rounded-lg border border-gray-200">
