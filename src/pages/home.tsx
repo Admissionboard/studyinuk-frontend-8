@@ -384,31 +384,31 @@ const { data: favorites, isLoading: favoritesLoading } = useQuery({
           </div>
         )}
 
- <div className="lg:col-span-1 space-y-6">
-  <ProfileSection />
-  <CompareCoursesSection />
-</div>
-              <div className="lg:col-span-2 space-y-6">
-                <NotificationsSection />
-                <TutorialsSection />
-              </div>
-            </div>
+          <div className="lg:col-span-1 space-y-6">
+            <ProfileSection />
+            <CompareCoursesSection />
           </div>
-        )}
-      </main>
+          <div className="lg:col-span-2 space-y-6">
+            <NotificationsSection />
+            <TutorialsSection />
+          </div>
+        </div> {/* ✅ Closes the grid layout */}
+      </div>   {/* ✅ Closes the dashboard container */}
+    )}
+  </main>
 
-      {selectedCourse && (
-        <CourseDetailsModal
-          course={selectedCourse}
-          isOpen={!!selectedCourse}
-          onClose={() => setSelectedCourse(null)}
-          onNavigateToApply={() => setActiveTab("apply")}
-        />
-      )}
+  {selectedCourse && (
+    <CourseDetailsModal
+      course={selectedCourse}
+      isOpen={!!selectedCourse}
+      onClose={() => setSelectedCourse(null)}
+      onNavigateToApply={() => setActiveTab("apply")}
+    />
+  )}
 
-      <FloatingActionButton onQuickApply={() => setActiveTab("apply")} />
-    </div>
-  );
+  <FloatingActionButton onQuickApply={() => setActiveTab("apply")} />
+</div>
+);
 };
 
 export default Home;
