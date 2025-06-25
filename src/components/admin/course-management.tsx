@@ -28,11 +28,10 @@ export default function CourseManagement() {
     queryKey: ["/api/universities"],
   });
 
-const filteredCourses = courses.filter(course => 
-  course.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  course.subject?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  course.university.name.toLowerCase().includes(searchTerm.toLowerCase())
-);
+  const filteredCourses = courses.filter(course => 
+    course.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    course.subject?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const filteredUniversities = universities.filter(university => 
     university.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
