@@ -390,17 +390,19 @@ const { data: favorites, isLoading: favoritesLoading } = useQuery({
 {activeTab === "dashboard" && (
   <div className="p-4 md:p-6">
     <h2 className="text-2xl font-bold text-gray-900 mb-6 md:hidden">My Dashboard</h2>
+
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-1 space-y-6">
         <ProfileSection />
         <CompareCoursesSection />
       </div>
+
       <div className="lg:col-span-2 space-y-6">
         <NotificationsSection />
         <TutorialsSection />
       </div>
-    </div> {/* ✅ Closes the grid layout */}
-  </div>   {/* ✅ Closes the dashboard container */}
+    </div>
+  </div>
 )}
 
 </main>
