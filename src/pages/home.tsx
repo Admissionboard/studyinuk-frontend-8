@@ -377,10 +377,13 @@ const { data: favorites, isLoading: favoritesLoading } = useQuery({
           </div>
         )}
 
-       {activeTab === "apply" && (
+{activeTab === "apply" && (
   <div className="p-4 md:p-6">
     <h2 className="text-2xl font-bold text-gray-900 mb-6 md:hidden">Submit Application</h2>
-    <ApplicationForm favorites={favorites || []} onNavigateToCourses={() => setActiveTab("courses")} />
+    <ApplicationForm
+      favorites={favorites || []}
+      onNavigateToCourses={() => setActiveTab("courses")}
+    />
   </div>
 )}
 
@@ -397,7 +400,7 @@ const { data: favorites, isLoading: favoritesLoading } = useQuery({
         <TutorialsSection />
       </div>
     </div> {/* ✅ Closes the grid layout */}
-  </div>   {/* ✅ Closes the padding container */}
+  </div>   {/* ✅ Closes the dashboard container */}
 )}
 
 </main>
@@ -413,7 +416,7 @@ const { data: favorites, isLoading: favoritesLoading } = useQuery({
 
 <FloatingActionButton onQuickApply={() => setActiveTab("apply")} />
 </div>
-  );
+);
 }
 
 export default Home;
