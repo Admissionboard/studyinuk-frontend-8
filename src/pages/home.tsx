@@ -22,6 +22,115 @@ import CounselorCard from "@/components/counselors/counselor-card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
+function CompareCoursesSection() {
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const { data: favorites, isLoading } = useQuery({
+    queryKey: ["/api/favorites"],
+    queryFn: () => apiRequest("/api/favorites"),
+  });
+
+  const toggleSelect = (courseId: string) => {
+    if (selectedIds.includes(courseId)) {
+      setSelectedIds(selectedIds.filter(id => id !== courseId));
+    } else if (selectedIds.length < 3) {
+      setSelectedIds([...selectedIds, courseId]);
+    } else {
+      alert("You can compare maximum 3 courses.");
+    }
+  };
+
+  const selectedCourses = favorites?.filter((c: any) => selectedIds.includes(c.course.id));
+
+  return (
+    <div className="mt-10 p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+      <h2 className="text-xl font-bold mb-4">Compare Courses</h2>
+      <p className="text-sm text-gray-600 mb-4">Select up to 3 favorite courses to compare.</p>
+
+      {isLoading ? (
+        <p>Loading your favorites...</p>
+      ) : favorites?.length === 0 ? (
+        <p className="text-gray-500">Make some courses favorite to compare.</p>
+      ) : (
+        <div className="space-y-3">
+          {favorites.map((item: any) => (
+            <div key={item.id} className="flex items-center justify-between border p-3 rounded-md">
+              <div>
+                <p className="font-semibold text-gray-800">{item.course.name}</p>
+                <p className="text-sm text-gray-500">{item.course.university.name}</p>
+              </div>
+              <Checkbox
+                checked={selectedIds.includes(item.course.id)}
+                onCheckedChange={() => toggleSelect(item.course.id)}
+              />
+            </div>
+          ))}
+
+          <Button
+            disabled={selectedIds.length < 2}
+            onClick={() => setModalOpen(true)}
+            className="mt-4"
+          >
+            Compare Selected
+          </Button>
+        </div>
+      )}
+
+      <Dialog open={isModalOpen} onOpenChange={setModalOpen}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>Course Comparison</DialogTitle>
+          </DialogHeader>
+
+          {selectedCourses?.length > 0 && (
+            <div className="overflow-x-auto mt-4">
+              <table className="table-auto w-full border text-left text-sm">
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th className="border p-2">Field</th>
+                    {selectedCourses.map((c: any, i: number) => (
+                      <th key={i} className="border p-2">{c.course.name}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="border p-2 font-medium">University</td>
+                    {selectedCourses.map((c: any, i: number) => (
+                      <td key={i} className="border p-2">{c.course.university.name}</td>
+                    ))}
+                  </tr>
+                  <tr>
+                    <td className="border p-2 font-medium">Tuition Fee</td>
+                    {selectedCourses.map((c: any, i: number) => (
+                      <td key={i} className="border p-2">£{parseInt(c.course.tuitionFee).toLocaleString()}</td>
+                    ))}
+                  </tr>
+                  <tr>
+                    <td className="border p-2 font-medium">IELTS</td>
+                    {selectedCourses.map((c: any, i: number) => (
+                      <td key={i} className="border p-2">{c.course.ieltsOverall}</td>
+                    ))}
+                  </tr>
+                  <tr>
+                    <td className="border p-2 font-medium">Scholarships</td>
+                    {selectedCourses.map((c: any, i: number) => (
+                      <td key={i} className="border p-2">
+                        {c.course.scholarships?.join(", ") || "N/A"}
+                      </td>
+                    ))}
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
 const Home = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("courses");
@@ -303,114 +412,3 @@ const { data: favorites, isLoading: favoritesLoading } = useQuery({
 };
 
 export default Home;
-
-// ✅ ADD THIS AT THE VERY END of home.tsx file (below export default Home)
-
-function CompareCoursesSection() {
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [isModalOpen, setModalOpen] = useState(false);
-
-  const { data: favorites, isLoading } = useQuery({
-    queryKey: ["/api/favorites"],
-    queryFn: () => apiRequest("/api/favorites"),
-  });
-
-  const toggleSelect = (courseId: string) => {
-    if (selectedIds.includes(courseId)) {
-      setSelectedIds(selectedIds.filter(id => id !== courseId));
-    } else if (selectedIds.length < 3) {
-      setSelectedIds([...selectedIds, courseId]);
-    } else {
-      alert("You can compare maximum 3 courses.");
-    }
-  };
-
-  const selectedCourses = favorites?.filter((c: any) => selectedIds.includes(c.course.id));
-
-  return (
-    <div className="mt-10 p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
-      <h2 className="text-xl font-bold mb-4">Compare Courses</h2>
-      <p className="text-sm text-gray-600 mb-4">Select up to 3 favorite courses to compare.</p>
-
-      {isLoading ? (
-        <p>Loading your favorites...</p>
-      ) : favorites?.length === 0 ? (
-        <p className="text-gray-500">Make some courses favorite to compare.</p>
-      ) : (
-        <div className="space-y-3">
-          {favorites.map((item: any) => (
-            <div key={item.id} className="flex items-center justify-between border p-3 rounded-md">
-              <div>
-                <p className="font-semibold text-gray-800">{item.course.name}</p>
-                <p className="text-sm text-gray-500">{item.course.university.name}</p>
-              </div>
-              <Checkbox
-                checked={selectedIds.includes(item.course.id)}
-                onCheckedChange={() => toggleSelect(item.course.id)}
-              />
-            </div>
-          ))}
-
-          <Button
-            disabled={selectedIds.length < 2}
-            onClick={() => setModalOpen(true)}
-            className="mt-4"
-          >
-            Compare Selected
-          </Button>
-        </div>
-      )}
-
-      <Dialog open={isModalOpen} onOpenChange={setModalOpen}>
-        <DialogContent className="max-w-4xl">
-          <DialogHeader>
-            <DialogTitle>Course Comparison</DialogTitle>
-          </DialogHeader>
-
-          {selectedCourses?.length > 0 && (
-            <div className="overflow-x-auto mt-4">
-              <table className="table-auto w-full border text-left text-sm">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="border p-2">Field</th>
-                    {selectedCourses.map((c: any, i: number) => (
-                      <th key={i} className="border p-2">{c.course.name}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td className="border p-2 font-medium">University</td>
-                    {selectedCourses.map((c: any, i: number) => (
-                      <td key={i} className="border p-2">{c.course.university.name}</td>
-                    ))}
-                  </tr>
-                  <tr>
-                    <td className="border p-2 font-medium">Tuition Fee</td>
-                    {selectedCourses.map((c: any, i: number) => (
-                      <td key={i} className="border p-2">£{parseInt(c.course.tuitionFee).toLocaleString()}</td>
-                    ))}
-                  </tr>
-                  <tr>
-                    <td className="border p-2 font-medium">IELTS</td>
-                    {selectedCourses.map((c: any, i: number) => (
-                      <td key={i} className="border p-2">{c.course.ieltsOverall}</td>
-                    ))}
-                  </tr>
-                  <tr>
-                    <td className="border p-2 font-medium">Scholarships</td>
-                    {selectedCourses.map((c: any, i: number) => (
-                      <td key={i} className="border p-2">
-                        {c.course.scholarships?.join(", ") || "N/A"}
-                      </td>
-                    ))}
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
-}
