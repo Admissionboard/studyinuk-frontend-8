@@ -121,18 +121,20 @@ function CompareCoursesSection() {
                   ))}
                 </tr>
                 <tr>
+  <td className="border p-2 font-medium">Scholarships</td>
+  {selectedCourses.map((c, i) => (
+    <td key={i} className="border p-2">
+      {c.course.scholarships && c.course.scholarships.length > 0
+        ? c.course.scholarships.join(", ")
+        : "None"}
+    </td>
+  ))}
+</tr>
+                <tr>
                   <td className="border p-2 font-medium">IELTS</td>
                   {selectedCourses.map((c: any, i: number) => (
                     <td key={i} className={`border p-2 bg-${["white", "blue-50", "green-50"][i]}`}>
                       {c.course.ieltsOverall}
-                    </td>
-                  ))}
-                </tr>
-                <tr>
-                  <td className="border p-2 font-medium">Scholarships</td>
-                  {selectedCourses.map((c: any, i: number) => (
-                    <td key={i} className={`border p-2 bg-${["white", "blue-50", "green-50"][i]}`}>
-                      {c.course.scholarships?.join(", ") || "N/A"}
                     </td>
                   ))}
                 </tr>
