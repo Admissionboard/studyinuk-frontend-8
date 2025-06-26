@@ -30,6 +30,8 @@ function CompareCoursesSection() {
     queryKey: ["/api/favorites"],
     queryFn: () => apiRequest("/api/favorites"),
   });
+  
+ console.log("Favorites data:", favorites);
 
   const toggleSelect = (courseId: string) => {
     if (selectedIds.includes(courseId)) {
