@@ -16,7 +16,9 @@ export default function AuthForm() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `https://www.studyinuk.co/`,
+          redirectTo: import.meta.env.DEV
+  ? 'http://localhost:5173/'
+  : 'https://www.studyinuk.co/',
         },
       });
 
