@@ -20,7 +20,8 @@ import type { CourseWithUniversity, Counselor } from "@/types";
 import { Button } from "@/components/ui/button";
 import CounselorCard from "@/components/counselors/counselor-card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { LogOut, Eye } from "lucide-react";
 
 function CompareCoursesSection() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -30,8 +31,6 @@ function CompareCoursesSection() {
     queryKey: ["/api/favorites"],
     queryFn: () => apiRequest("/api/favorites"),
   });
-
-console.log("Favorites from API:", favorites);
 
   const toggleSelect = (courseId: string) => {
     if (selectedIds.includes(courseId)) {
@@ -43,55 +42,60 @@ console.log("Favorites from API:", favorites);
     }
   };
 
-  const selectedCourses = favorites?.filter((c: any) => selectedIds.includes(c.course.id));
 
-  const hasFavorites = favorites && favorites.length > 0;
+const hasFavorites = favorites && favorites.length > 0;
+const selectedCourses = favorites?.filter((c: any) => selectedIds.includes(c.course.id));
 
   return (
-    <div className="mt-10 p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
-      <h2 className="text-xl font-bold mb-4">Compare Courses</h2>
+    <div className="border p-4 rounded-lg bg-white shadow">
+      <h3 className="text-lg font-semibold mb-2">Compare Courses</h3>
 
-      {!hasFavorites ? (
-        <p className="text-gray-500">Make some courses favorite to compare.</p>
-      ) : (
-        <>
-          <p className="text-sm text-gray-600 mb-4">
-            Select up to 3 favorite courses to compare.
-          </p>
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : hasFavorites ? (
+        <div className="space-y-2">
+          <p className="text-sm text-gray-600">Select up to 3 favorite courses to compare.</p>
 
-          <div className="space-y-3">
-            {favorites.map((item: any) => (
-              <div
-                key={item.id}
-                className="flex items-center justify-between border p-3 rounded-md"
-              >
-                <div>
-                  <p className="font-semibold text-gray-800">{item.course.name}</p>
-                  <p className="text-sm text-gray-500">{item.course.university.name}</p>
-                </div>
-                <Checkbox
-                  checked={selectedIds.includes(item.course.id)}
-                  onCheckedChange={() => toggleSelect(item.course.id)}
-                />
-              </div>
-            ))}
-          </div>
+{favorites.map((fav: any) => (
+  <div key={fav.course.id} className="flex items-center space-x-2">
+    <input
+      type="checkbox"
+      checked={selectedIds.includes(fav.course.id)}
+      onChange={() => toggleSelect(fav.course.id)}
+      disabled={
+        !selectedIds.includes(fav.course.id) && selectedIds.length >= 3
+      }
+    />
+    <div>
+      <p className="text-sm font-medium">{fav.course.name}</p>
+      <p className="text-xs text-gray-500">{fav.course.university.name}</p> {/* ✅ Shows university name */}
+    </div>
+  </div>
+))}
 
           <Button
-            disabled={selectedIds.length < 2}
             onClick={() => setModalOpen(true)}
-            className="mt-4"
+            disabled={selectedIds.length < 2}
+            className="mt-2"
           >
             Compare Selected
           </Button>
-        </>
+        </div>
+      ) : (
+        <p className="text-sm text-gray-600">Make some courses favorite to compare.</p>
       )}
 
-      <Dialog open={isModalOpen} onOpenChange={setModalOpen}>
-        <DialogContent className="max-w-4xl overflow-x-auto">
-          <DialogHeader>
-            <DialogTitle>Course Comparison</DialogTitle>
-          </DialogHeader>
+<Dialog open={isModalOpen} onOpenChange={setModalOpen}>
+  <DialogContent
+    className="max-w-4xl overflow-x-auto"
+    aria-describedby="compare-courses-description"
+  >
+    <DialogHeader>
+  <DialogTitle>Course Comparison</DialogTitle>
+  <DialogDescription>
+    Side-by-side comparison of your selected favorite courses.
+  </DialogDescription>
+</DialogHeader>
 
           {selectedCourses?.length > 0 && (
             <table className="table-auto w-full border text-left text-sm mt-4">
@@ -123,26 +127,102 @@ console.log("Favorites from API:", favorites);
                   ))}
                 </tr>
                 <tr>
-  <td className="border p-2 font-medium">Scholarships</td>
-  {selectedCourses.map((c, i) => (
-    <td
-      key={i}
-      className={`border p-2 bg-${["white", "blue-50", "green-50"][i]}`}
-    >
-      {Array.isArray(c.course.scholarships) && c.course.scholarships.length > 0
-        ? c.course.scholarships.join(", ")
-        : "None"}
+                  <td className="border p-2 font-medium">Scholarships</td>
+                  {selectedCourses.map((c, i) => (
+                    <td key={i} className={`border p-2 bg-${["white", "blue-50", "green-50"][i]}`}>
+                      {c.course.scholarships && c.course.scholarships.length > 0
+                        ? c.course.scholarships.join(", ")
+                        : "None"}
+                    </td>
+                  ))}
+                </tr>
+                <tr>
+                  <td className="border p-2 font-medium">IELTS Overall</td>
+                  {selectedCourses.map((c, i) => (
+                    <td key={i} className={`border p-2 bg-${["white", "blue-50", "green-50"][i]}`}>
+                      {c.course.ieltsOverall || "N/A"}
+                    </td>
+                  ))}
+                </tr>
+                <tr>
+                  <td className="border p-2 font-medium">QS Ranking</td>
+                  {selectedCourses.map((c, i) => (
+                    <td key={i} className={`border p-2 bg-${["white", "blue-50", "green-50"][i]}`}>
+                      {c.course.university.qsRanking || "Not Ranked"}
+                    </td>
+                  ))}
+                </tr>
+                <tr>
+                  <td className="border p-2 font-medium">UK Ranking</td>
+                  {selectedCourses.map((c, i) => (
+                    <td key={i} className={`border p-2 bg-${["white", "blue-50", "green-50"][i]}`}>
+                      {c.course.university.ukRanking || "Not Ranked"}
+                    </td>
+                  ))}
+                </tr>
+                <tr>
+  <td className="border p-2 font-medium">Location</td>
+  {selectedCourses.map((c: any, i: number) => (
+    <td key={i} className={`border p-2 bg-${["white", "blue-50", "green-50"][i]}`}>
+      {c.course.university.googleMapUrl ? (
+        <a
+          href={c.course.university.googleMapUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 underline"
+        >
+          View on Map
+        </a>
+      ) : (
+        "N/A"
+      )}
     </td>
   ))}
 </tr>
                 <tr>
-                  <td className="border p-2 font-medium">IELTS</td>
-                  {selectedCourses.map((c: any, i: number) => (
-                    <td key={i} className={`border p-2 bg-${["white", "blue-50", "green-50"][i]}`}>
-                      {c.course.ieltsOverall}
-                    </td>
-                  ))}
+                  <td className="border p-2 font-medium">Job Prospects</td>
+                  {selectedCourses.map((c, i) => {
+                    const query = encodeURIComponent(
+                      `worldwide job prospects after studying ${c.course.name} at ${c.course.university.name}, UK for Bangladeshi students`
+                    );
+                    const searchUrl = `https://www.google.com/search?q=${query}`;
+                    return (
+                      <td
+                        key={i}
+                        className={`border p-2 bg-${["white", "blue-50", "green-50"][i]}`}
+                      >
+                        <a
+                          href={searchUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title="Click to generate detailed job prospects using ChatGPT"
+                          className="text-blue-600 underline flex items-center gap-1"
+                        >
+                          <Eye className="h-4 w-4" /> View
+                        </a>
+                      </td>
+                    );
+                  })}
                 </tr>
+                <tr>
+  <td className="border p-2 font-medium">Google Course Link</td>
+  {selectedCourses.map((c: any, i: number) => {
+    const query = encodeURIComponent(`${c.course.name} ${c.course.university.name} UK`);
+    const searchUrl = `https://www.google.com/search?q=${query}`;
+    return (
+      <td key={i} className={`border p-2 bg-${["white", "blue-50", "green-50"][i]}`}>
+        <a
+          href={searchUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:underline"
+        >
+          Search on Google
+        </a>
+      </td>
+    );
+  })}
+</tr>
               </tbody>
             </table>
           )}
